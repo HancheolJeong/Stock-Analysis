@@ -1,0 +1,41 @@
+﻿@model List<BusinessLayer.DTO.GetStockDTO>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+@foreach (var stock in Model)
+{
+    <div>
+        <h4>GetStockDTO</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => stock.ticker)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => stock.ticker)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => stock.name)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => stock.name)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => stock.market)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => stock.market)
+            </dd>
+        </dl>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    <a asp-action="Index">Back to List</a>
+</div>

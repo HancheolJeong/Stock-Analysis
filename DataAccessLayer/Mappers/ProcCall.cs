@@ -11,7 +11,13 @@ namespace DataAccessLayer.Mappers
 
     public class ProcCall
     {
-        private string connstr = "Data Source=DESKTOP-P6DU1C5;Initial Catalog=MytestDB;User ID=sa;Password=wjdgkscjf97!;Connect Timeout=30";
+        private string connectionString = "";
+
+
+        public ProcCall(string conn)
+        {
+            this.connectionString = conn;
+        }
 
         /// <summary>
         /// 프로시저를 호출하는데 사용되는 공통함수
@@ -21,7 +27,7 @@ namespace DataAccessLayer.Mappers
         public async Task<DataTable> RequestProcedure(string procedurename, Dictionary<string, object> dc)
         {
 
-            using (SqlConnection conn = new SqlConnection(connstr))
+            using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 await conn.OpenAsync();
 

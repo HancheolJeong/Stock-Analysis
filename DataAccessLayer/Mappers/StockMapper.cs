@@ -45,39 +45,36 @@ namespace DataAccessLayer.Mappers
          */
         public async Task<List<Stock>> GetAll()
         {
+            List<Stock> list = new List<Stock>();
             try
             {
-                List<Stock> list = new List<Stock>();
                 using (SqlConnection sqlConnection = new SqlConnection(connectionString))
                 {
                     await sqlConnection.OpenAsync();
-                    SqlCommand sqlCommand = sqlConnection.CreateCommand();
-                    sqlCommand.CommandText = "SELECT TOP 100 * FROM Stocks";
-                    SqlDataReader reader = await sqlCommand.ExecuteReaderAsync();
-
-                    if (reader.HasRows)
+                    using (SqlCommand sqlCommand = new SqlCommand("SELECT TOP 100 * FROM stock.stocks", sqlConnection))
                     {
-                        while (reader.Read())
+                        using (SqlDataReader reader = await sqlCommand.ExecuteReaderAsync())
                         {
-                            Stock stock = new Stock
+                            while (reader.Read())
                             {
-
-                                ticker = reader.GetString(reader.GetOrdinal("ticker")),
-                                name = reader.GetString(reader.GetOrdinal("name")),
-                                market = reader.GetString(reader.GetOrdinal("market")),
-                            };
-                            list.Add(stock);
+                                Stock stock = new Stock
+                                {
+                                    ticker = reader.GetString(reader.GetOrdinal("ticker")),
+                                    name = reader.GetString(reader.GetOrdinal("name")),
+                                    market = reader.GetString(reader.GetOrdinal("market"))
+                                };
+                                list.Add(stock);
+                            }
                         }
                     }
-                    reader.Close();
                 }
-
-                return list;
             }
             catch (Exception ex)
             {
-                throw;
+                // Ideally, log this exception
+                throw new Exception("An error occurred while retrieving stocks.", ex);
             }
+            return list;
         }
     }
 }
