@@ -15,4 +15,12 @@
     <ProjectReference Include="..\BusinessLayer\BusinessLayer.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\resources\js\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\resources\images\stock.png" />
+  </ItemGroup>
+
 </Project>

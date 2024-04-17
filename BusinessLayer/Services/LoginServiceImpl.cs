@@ -65,21 +65,21 @@ namespace BusinessLayer.Services
 
         public async Task<GetUserResponseDTO> GetUser(GetUserDTO getUserDTO)
         {
-            var configuration = new MapperConfiguration(cfg => { });
+            //var configuration = new MapperConfiguration(cfg => { });
 
 
 
-            Mapper mapper = new Mapper(configuration);
-            Dictionary<string, object>  dc = mapper.Map<GetUserDTO, Dictionary<string, object>>(getUserDTO);
-            dc.Remove("Password");
-            ProcCall procCall = new ProcCall();
-            DataTable dt = await procCall.RequestProcedure("sp_usertest",dc);
+            //Mapper mapper = new Mapper(configuration);
+            //Dictionary<string, object>  dc = mapper.Map<GetUserDTO, Dictionary<string, object>>(getUserDTO);
+            //dc.Remove("Password");
+            //ProcCall procCall = new ProcCall();
+            //DataTable dt = await procCall.RequestProcedure("sp_usertest",dc);
 
             GetUserResponseDTO dto = new GetUserResponseDTO();
-            dto.Id = (int)dt.Rows[0]["id"];
-            dto.Userid = dt.Rows[0]["userid"].ToString();
-            dto.Username = dt.Rows[0]["username"].ToString();
-            dto.Point = (int)dt.Rows[0]["point"];
+            //dto.Id = (int)dt.Rows[0]["id"];
+            //dto.Userid = dt.Rows[0]["userid"].ToString();
+            //dto.Username = dt.Rows[0]["username"].ToString();
+            //dto.Point = (int)dt.Rows[0]["point"];
             return dto;
         }
 
