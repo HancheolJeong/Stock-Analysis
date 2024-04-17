@@ -1,0 +1,77 @@
+﻿@model List<string>
+@{
+	string title = "제목입니다."; 
+	string titleB = "제목입니다.";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+	@DateTime.Now.ToLongTimeString() 
+	@DateTime.Now.ToLongTimeString()
+	@{
+		<br/>@title
+	}
+	<h2>@titleB</h2>
+
+
+    @{
+        string hour0 = "아침";
+        string hour17 = "저녁";
+        int hour = DateTime.Now.Hour; //오전 10시인 경우
+    }
+    @* if문 공부 *@
+    @if (hour < 12)
+    {
+        <div>@hour0</div>
+        //해당 내용만 표시
+    }
+    else if (hour <= 17)
+    {
+        <div>오후</div>
+    }
+    else
+    {
+        <div>@hour17</div>
+    }
+
+    @{
+        string nation = "korea";
+    }
+    @switch (nation)
+    {
+        case "korea":
+            <h3>안녕하세요.</h3>
+            break;
+        case "usa":
+            <h3>Hallo.</h3>
+            break;
+        default:
+            <h3>welcome</h3>
+            break;
+    }
+
+    @{
+        string[] datas = { "abc", "def", "ghi" };
+    }
+    @ViewBag.MyNum
+    <ul>
+        @foreach (var data in ViewBag.MyTest)
+        {
+            <li>@data</li>
+        }
+    </ul>
+    @ViewData["MyMsg"]
+    <ul>
+        @foreach (var data in Model)
+        {
+            <li>@data</li>
+        }
+    </ul>
+</body>
+</html>
