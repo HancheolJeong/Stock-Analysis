@@ -1,0 +1,36 @@
+﻿@model BusinessLayer.DTO.GetUserDTO
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "SearchUserId";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>SearchUserId</h1>
+
+<h4>GetUserDTO</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="GetUser">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="UserId" class="control-label">아이디</label>
+                <input asp-for="UserId" class="form-control" />
+                <span asp-validation-for="UserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="로그인" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
