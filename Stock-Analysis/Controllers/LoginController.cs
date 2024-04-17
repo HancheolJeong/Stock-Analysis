@@ -19,6 +19,7 @@ namespace Stock_Analysis.Controllers
 
         public async Task<IActionResult> GetAllUser()
         {
+            string a = "a";
             return View(await loginService.GetAllUser());
         }
 
