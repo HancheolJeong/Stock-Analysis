@@ -14,5 +14,12 @@ namespace Stock_Analysis.Controllers
         {
             return View(await stockService.GetStockInfo());
         }
+
+        public IActionResult Test()
+        {
+            return View();
+        }
+
+
     }
 }

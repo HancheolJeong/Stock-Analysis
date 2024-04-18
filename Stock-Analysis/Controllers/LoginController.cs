@@ -1,6 +1,10 @@
 ﻿using BusinessLayer.DTO;
 using BusinessLayer.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
 
 namespace Stock_Analysis.Controllers
 {
@@ -12,44 +16,73 @@ namespace Stock_Analysis.Controllers
         {
             loginService = service;
         }
+
+        public IActionResult Index()
+        {
+            return View();
+        }
         public IActionResult NewUser()
         {
             return View();
         }
 
-        public async Task<IActionResult> GetAllUser()
+        public async Task<IActionResult> Login(string returnUrl = "/")
         {
-            string a = "a";
-            return View(await loginService.GetAllUser());
+            var authenticationProperties = new AuthenticationProperties
+            {
+                RedirectUri = Url.Action("GoogleResponse", new { ReturnUrl = returnUrl })
+            };
+            return Challenge(authenticationProperties, GoogleDefaults.AuthenticationScheme);
         }
+
+        public async Task<IActionResult> GoogleResponse()
+        {
+            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!result.Succeeded)
+            {
+                return Redirect("/login"); // 인증 실패 시 로그인 페이지로 리디렉션
+            }
+
+            GetUserDTO dto = new GetUserDTO();
+            var claims = result.Principal.Identities.FirstOrDefault()?.Claims;
+            dto.email = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            dto.name = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+
+            var res = await loginService.Login(dto);
+            if(res) // 로그인 성공
+            {
+                HttpContext.Session.Set("LoginUser", dto);
+            }
+
+            return Redirect("/login/SearchUserId");
+        }
+
 
         public IActionResult SearchUserId()
         {
             return View();
         }
 
-        public async Task<IActionResult> GetUser(GetUserDTO getUserDTO)
+        public IActionResult AuthenticateSession()
         {
-            if(ModelState.IsValid)
+            return View();
+        }
+
+        public IActionResult Auth()
+        {
+            // 세션에서 사용자 정보 가져오기
+            GetUserDTO? userDto = HttpContext.Session.Get<GetUserDTO>("LoginUser");
+
+            if (userDto != null)
             {
-                //return Redirect("/home/index");
+                // 사용자 정보가 세션에 있으면, 이를 사용하여 로직 처리
+                return View(userDto); // 예를 들어, 사용자 정보를 뷰로 전달
             }
             else
             {
-                return Redirect("/login/SearchUserId");
+                // 사용자 정보가 세션에 없으면 로그인 페이지로 리디렉션
+                return RedirectToAction("Login", "Account");
             }
-            GetUserResponseDTO dto = await loginService.GetUser(getUserDTO);
-            HttpContext.Session.Set("LoginUser", dto);
-            return Redirect("/home/index");
         }
-
-
-        [HttpPost]
-        public async Task<IActionResult> CreateUser(CreateUserDTO createUserDTO)
-        {
-            await loginService.CreateUser(createUserDTO);
-            return Redirect("/home/index");
-        }
-
     }
 }

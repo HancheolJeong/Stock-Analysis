@@ -24,19 +24,5 @@ namespace Stock_Analysis.Controllers
             return Redirect("/home/test");
         }
 
-
-        public IActionResult Test()
-        {
-            GetUserResponseDTO? user = HttpContext.Session.Get<GetUserResponseDTO>("LoginUser");
-            ViewData["MyMsg"] = "Hello response";
-            ViewBag.MyTest = new List<string> {"abc", "kim", "lee" };
-            ViewBag.MyNum = 5;
-            var list = new List<String> { "abc", "kim", "lee"};
-            if(user != null && user.Username != null)
-            {
-                list.Add(user.Username);
-            }
-            return View(list);
-        }
     }
 }

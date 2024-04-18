@@ -13,11 +13,15 @@ namespace DataAccessLayer.Mappers
     {
         private string connectionString = "";
 
-
-        public ProcCall(string conn)
+        public ProcCall()
         {
-            this.connectionString = conn;
+            this.connectionString = "";
         }
+        //public ProcCall(string conn)
+        //{
+        //    this.connectionString = conn;
+        //}
+
 
         /// <summary>
         /// 프로시저를 호출하는데 사용되는 공통함수
