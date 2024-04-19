@@ -11,8 +11,8 @@ namespace DataAccessLayer.Mappers
     public class StockMapper : IStockMapper
     {
         private string connectionString;
-        public StockMapper(string conn)
-        {
+
+        public StockMapper(string conn) {
             connectionString = conn;
         }
 
@@ -162,6 +162,7 @@ MarketCap AS (
 SELECT 
     s.name,
     s.ticker,
+	s.market,
     o.closing_price,
     m.market_value,
     m.trading_volume,
@@ -185,6 +186,7 @@ JOIN
                                 {
                                     ticker = reader.GetString(reader.GetOrdinal("ticker")),
                                     name = reader.GetString(reader.GetOrdinal("name")),
+                                    market = reader.GetString(reader.GetOrdinal("market")),
                                     closing_price = reader.GetInt32(reader.GetOrdinal("closing_price")),
                                     market_value = reader.GetInt64(reader.GetOrdinal("market_value")),
                                     trading_volume = reader.GetInt64(reader.GetOrdinal("trading_volume")),
@@ -206,5 +208,5 @@ JOIN
         }
     }
 
-
+    
 }

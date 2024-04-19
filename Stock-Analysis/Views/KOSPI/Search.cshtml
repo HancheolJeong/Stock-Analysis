@@ -1,0 +1,35 @@
+﻿@model List<DataAccessLayer.Models.AdvancedStock>
+@{
+    ViewData["Title"] = "Search";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="text-center my-4">Search Results for "@ViewBag.Query"</h1>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>종목번호</th>
+            <th>종목명</th>
+            <th>종가</th>
+            <th>시가총액</th>
+            <th>거래량</th>
+            <th>상장주식수</th>
+            <th>업데이트날짜</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var stock in Model)
+        {
+            <tr>
+                <td>@stock.ticker</td>
+                <td>@stock.name</td>
+                <td>@stock.closing_price.ToString("N0")</td>
+                <td>@stock.market_value.ToString("N0")</td>
+                <td>@stock.trading_volume.ToString("N0")</td>
+                <td>@stock.listed_stocks.ToString("N0")</td>
+                <td>@stock.trade_date</td>
+            </tr>
+        }
+    </tbody>
+</table>

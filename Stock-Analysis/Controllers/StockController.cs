@@ -21,5 +21,7 @@ namespace Stock_Analysis.Controllers
         }
 
 
+
+
     }
 }

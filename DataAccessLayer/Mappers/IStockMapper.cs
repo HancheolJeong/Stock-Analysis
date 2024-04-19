@@ -16,5 +16,6 @@ namespace DataAccessLayer.Mappers
         public Task<List<Stock>> GetData(int pageNumber, int pageSize);
 
         public Task<List<AdvancedStock>> GetAdvancedStockData();
+
     }
 }

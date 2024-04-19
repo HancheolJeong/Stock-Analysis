@@ -22,7 +22,7 @@ builder.Services.AddAuthentication(options =>
 
 string? connStr = builder.Configuration.GetConnectionString("MSSQL") ?? "";
 builder.Services.AddMemoryCache();
-builder.Services.AddSingleton<CacheService>();
+builder.Services.AddSingleton<StockService>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<ILoginService, LoginServiceImpl>();
 builder.Services.AddTransient<IStockService, StockService>();
@@ -38,7 +38,7 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 var app = builder.Build();
-var cacheService = app.Services.GetRequiredService<CacheService>();
+var cacheService = app.Services.GetRequiredService<StockService>();
 await cacheService.LoadDataAsync();
 app.UseSession();
 app.UseStaticFiles();

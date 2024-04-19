@@ -10,6 +10,7 @@ namespace DataAccessLayer.Models
     {
         public string? ticker { get; set; }
         public string? name { get; set; }
+        public string? market { get; set; }
         public int closing_price { get; set; }
         public long market_value { get; set; }
         public long trading_volume { get; set; }
