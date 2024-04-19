@@ -18,11 +18,19 @@ namespace BusinessLayer.Services
         {
             loginMapper = mapper;
         }
+        public async Task CreateUser(CreateUserDTO createUserDTO)
+        {
+            try
+            {
+                //속성 유효성검사
+                //if(createUserDTO == null)
+                //업무규칙 적용
+                //DTO와 Entity로 변경.
 
         public async Task<bool> Login(GetUserDTO getUserDTO)
-        {
+            {
             var configuration = new MapperConfiguration(cfg => { });
-            Mapper mapper = new Mapper(configuration);
+                Mapper mapper = new Mapper(configuration);
             Dictionary<string, object> dc = mapper.Map<GetUserDTO, Dictionary<string, object>>(getUserDTO);
             ProcCall procCall = new ProcCall();
             DataTable dt = await procCall.RequestProcedure("UpsertUserByEmail", dc);

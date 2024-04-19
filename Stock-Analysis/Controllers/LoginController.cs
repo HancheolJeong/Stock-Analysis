@@ -82,7 +82,15 @@ namespace Stock_Analysis.Controllers
             {
                 // 사용자 정보가 세션에 없으면 로그인 페이지로 리디렉션
                 return RedirectToAction("Login", "Account");
-            }
         }
+
+
+        [HttpPost]
+        public async Task<IActionResult> CreateUser(CreateUserDTO createUserDTO)
+        {
+            await loginService.CreateUser(createUserDTO);
+            return Redirect("/home/index");
+        }
+
     }
 }
