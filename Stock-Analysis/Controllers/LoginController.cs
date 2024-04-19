@@ -49,7 +49,7 @@ namespace Stock_Analysis.Controllers
             dto.name = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
 
             var res = await loginService.Login(dto);
-            if(res) // 로그인 성공
+            if (res) // 로그인 성공
             {
                 HttpContext.Session.Set("LoginUser", dto);
             }
@@ -82,15 +82,7 @@ namespace Stock_Analysis.Controllers
             {
                 // 사용자 정보가 세션에 없으면 로그인 페이지로 리디렉션
                 return RedirectToAction("Login", "Account");
+            }
         }
-
-
-        [HttpPost]
-        public async Task<IActionResult> CreateUser(CreateUserDTO createUserDTO)
-        {
-            await loginService.CreateUser(createUserDTO);
-            return Redirect("/home/index");
-        }
-
     }
 }
