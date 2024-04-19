@@ -1,13 +1,52 @@
 ﻿
 @{
     ViewBag.TItle = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-abc123
-<h1>Index</h1>
-
-<form action="/home/index" method="post">
-    <input type="text" name="userid"/>
-    <input type="text" name="age" />
-    <input type="submit" name="제출"/>
-</form>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <h1 class="mb-5">KOSPI : @ViewBag.KospiIndex.ToString("N0")</h1> 
+            <h1 class="mb-3">KOSPI 시가총액 TOP 5</h1>
+            <ul class="list-group mb-5">
+                @foreach (var item in ViewBag.KospiMarketCapTOP5)
+                {
+                    <li class="list-group-item mb-2">
+                        @item.name : \@item.market_value.ToString("N0")
+                    </li>
+                }
+            </ul>
+            <h1 class="mb-3">KOSPI 거래대금 TOP 5</h1>
+            <ul class="list-group mb-5">
+                @foreach (var item in ViewBag.KospiTransactionAmountTOP5)
+                {
+                    <li class="list-group-item mb-2">
+                        @item.name : \@item.transaction_amount.ToString("N0")
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="col-md-6 mb-4">
+            <h1 class="mb-5">KOSDAQ : @ViewBag.KosdaqIndex.ToString("N0")</h1>
+            <h1 class="mb-3">KOSDAQ 시가총액 TOP 5</h1>
+            <ul class="list-group mb-5">
+                @foreach (var item in ViewBag.KosdaqMarketCapTOP5)
+                {
+                    <li class="list-group-item mb-2">
+                        @item.name : \@item.market_value.ToString("N0")
+                    </li>
+                }
+            </ul>
+            <h1 class="mb-3">KOSDAQ 거래대금 TOP 5</h1>
+            <ul class="list-group">
+                @foreach (var item in ViewBag.KosdaqTransactionAmountTOP5)
+                {
+                    <li class="list-group-item mb-2">
+                        @item.name : \@item.transaction_amount.ToString("N0")
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>

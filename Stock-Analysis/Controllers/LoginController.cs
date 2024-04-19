@@ -35,6 +35,12 @@ namespace Stock_Analysis.Controllers
             return Challenge(authenticationProperties, GoogleDefaults.AuthenticationScheme);
         }
 
+        public async Task<IActionResult> Logout()
+        {
+            HttpContext.Session.Remove("LoginUser");
+            return Redirect("/");
+        }
+
         public async Task<IActionResult> GoogleResponse()
         {
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -54,7 +60,7 @@ namespace Stock_Analysis.Controllers
                 HttpContext.Session.Set("LoginUser", dto);
             }
 
-            return Redirect("/login/SearchUserId");
+            return Redirect("/");
         }
 
 
@@ -67,6 +73,7 @@ namespace Stock_Analysis.Controllers
         {
             return View();
         }
+
 
         public IActionResult Auth()
         {

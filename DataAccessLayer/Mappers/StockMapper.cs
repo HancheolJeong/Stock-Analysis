@@ -153,7 +153,8 @@ MarketCap AS (
         m.trade_date, 
         m.market_value, 
         m.trading_volume, 
-        m.listed_stocks
+        m.listed_stocks,
+        m.transaction_amount
     FROM 
         stock.stocks_market_cap m
     JOIN 
@@ -167,6 +168,7 @@ SELECT
     m.market_value,
     m.trading_volume,
     m.listed_stocks,
+    m.transaction_amount,
 	o.trade_date
 FROM 
     stock.stocks s
@@ -190,6 +192,7 @@ JOIN
                                     closing_price = reader.GetInt32(reader.GetOrdinal("closing_price")),
                                     market_value = reader.GetInt64(reader.GetOrdinal("market_value")),
                                     trading_volume = reader.GetInt64(reader.GetOrdinal("trading_volume")),
+                                    transaction_amount = reader.GetInt64(reader.GetOrdinal("transaction_amount")),
                                     listed_stocks = reader.GetInt64(reader.GetOrdinal("listed_stocks")),
                                     trade_date = DateOnly.FromDateTime((DateTime)reader["trade_date"])
                                 };

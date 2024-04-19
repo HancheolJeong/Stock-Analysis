@@ -1,23 +1,27 @@
 ﻿using BusinessLayer.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Drawing.Printing;
 
 namespace Stock_Analysis.Controllers
 {
-    public class KOSPIController : Controller
+    public class KOSDAQController : Controller
     {
         private readonly IStockService _stockService;
         private const int _PageSize = 100;
-        public KOSPIController(IStockService service)
+        public KOSDAQController(IStockService service)
         {
             _stockService = service;
         }
-        [HttpGet("KOSPI/{pageNumber:int}")]
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpGet("KOSDAQ/{pageNumber:int}")]
         public IActionResult Index(int pageNumber = 1)
         {
-            var stocks = _stockService.GetKOSPI(pageNumber, _PageSize);
-            int totalPages = _stockService.GetKOSPICount(_PageSize);
-            if(pageNumber == 1) // 무한루프로 빠지는 것을 막기 위한 로직
+            var stocks = _stockService.GetKOSDAQ(pageNumber, _PageSize);
+            int totalPages = _stockService.GetKOSDAQCount(_PageSize);
+            if (pageNumber == 1) // 무한루프로 빠지는 것을 막기 위한 로직
             {
                 ViewBag.CurrentPage = pageNumber;
                 ViewBag.TotalPages = totalPages;
@@ -32,15 +36,15 @@ namespace Stock_Analysis.Controllers
             return View(stocks);
         }
 
-        [HttpGet("KOSPI/search")]
+        [HttpGet("KOSDAQ/search")]
         public IActionResult Search(string query)
         {
-            var stocks = _stockService.SearchKOSPI(query);
+            var stocks = _stockService.SearchKOSDAQ(query);
             ViewBag.Query = query;
             return View(stocks);
         }
 
-        [HttpGet("KOSPI/Detail")]
+        [HttpGet("KOSDAQ/Detail")]
         public IActionResult Detail(string ticker)
         {
             // 여기서 ticker에 해당하는 종목의 상세 정보를 가져오는 로직을 추가하시면 됩니다.

@@ -12,24 +12,30 @@
                         <a href="/Kospi/1" class="nav-link">KOSPI</a>
                     </li>
                     <li class="nav-item">
-                        <a href="/Kosdaq" class="nav-link">KOSDAQ</a>
+                        <a href="/Kosdaq/1" class="nav-link">KOSDAQ</a>
                     </li>
                     <li class="nav-item">
-                        <a href="/ETF" class="nav-link">ETF</a>
+                        <a href="/ETF/1" class="nav-link">ETF</a>
                     </li>
                     <li class="nav-item">
-                        <a href="/ETN" class="nav-link">ETN</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/Index" class="nav-link">INDEX</a>
+                        <a href="/Index/1" class="nav-link">INDEX</a>
                     </li>
                 </ul>
             </div>
             <div class="navbar-nav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a asp-controller="Login" asp-action="Login" class="nav-link">Login</a>
-                    </li>
+                    @if (Context.Session.GetString("LoginUser") != null)
+                    {
+                        <li class="nav-item">
+                            <a asp-controller="Login" asp-action="Logout" class="nav-link">Logout</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a asp-controller="Login" asp-action="Login" class="nav-link">Login</a>
+                        </li>
+                    }
                     <li class="nav-item">
                         <a href="/Portfolio" class="nav-link">Portfolio</a>
                     </li>

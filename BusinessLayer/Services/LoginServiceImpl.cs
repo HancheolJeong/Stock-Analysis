@@ -13,27 +13,20 @@ namespace BusinessLayer.Services
 {
     public class LoginServiceImpl : ILoginService
     {
-        ILoginMapper loginMapper;
-        public LoginServiceImpl(ILoginMapper mapper)
+        ILoginMapper _loginMapper;
+        IProcCall _procCall;
+        public LoginServiceImpl(ILoginMapper mapper, IProcCall procCall)
         {
-            loginMapper = mapper;
+            _loginMapper = mapper;
+            this._procCall = procCall;
         }
-        public async Task CreateUser(CreateUserDTO createUserDTO)
-        {
-            try
-            {
-                //속성 유효성검사
-                //if(createUserDTO == null)
-                //업무규칙 적용
-                //DTO와 Entity로 변경.
 
         public async Task<bool> Login(GetUserDTO getUserDTO)
-            {
+        {
             var configuration = new MapperConfiguration(cfg => { });
-                Mapper mapper = new Mapper(configuration);
+            Mapper mapper = new Mapper(configuration);
             Dictionary<string, object> dc = mapper.Map<GetUserDTO, Dictionary<string, object>>(getUserDTO);
-            ProcCall procCall = new ProcCall();
-            DataTable dt = await procCall.RequestProcedure("UpsertUserByEmail", dc);
+            DataTable dt = await _procCall.RequestProcedure("UpsertUserByEmail", dc);
 
             bool result = dt.Rows[0]["Result"].ToString() == "fail" ? false : true;
             return result;

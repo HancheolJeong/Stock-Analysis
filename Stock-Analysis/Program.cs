@@ -23,11 +23,19 @@ builder.Services.AddAuthentication(options =>
 string? connStr = builder.Configuration.GetConnectionString("MSSQL") ?? "";
 builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<StockService>();
+builder.Services.AddSingleton<IndexService>();
+builder.Services.AddSingleton<ETFService>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<ILoginService, LoginServiceImpl>();
 builder.Services.AddTransient<IStockService, StockService>();
+builder.Services.AddTransient<IIndexService, IndexService>();
+//builder.Services.AddTransient<IProcCall, ProcCall>();
+builder.Services.AddTransient<IETFService, ETFService>();
 builder.Services.AddTransient<ILoginMapper, LoginMapper>(provider => new LoginMapper(connStr));
 builder.Services.AddTransient<IStockMapper, StockMapper>(provider => new StockMapper(connStr));
+builder.Services.AddTransient<IIndexMapper, IndexMapper>(provider => new IndexMapper(connStr));
+builder.Services.AddTransient<IProcCall, ProcCall>(provider => new ProcCall(connStr));
+builder.Services.AddTransient<IETFMapper, ETFMapper>(provider => new ETFMapper(connStr));
 //builder.Services.AddTransient<ProcCall>(provider => new ProcCall());
 //builder.Services.AddTransient<ProcCall>(provider => new ProcCall(connStr));
 builder.Services.AddDistributedMemoryCache();
@@ -38,8 +46,18 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 var app = builder.Build();
-var cacheService = app.Services.GetRequiredService<StockService>();
-await cacheService.LoadDataAsync();
+var stockService = app.Services.GetRequiredService<StockService>();
+var indexService = app.Services.GetRequiredService<IndexService>();
+var etfService = app.Services.GetRequiredService<ETFService>();
+await stockService.LoadDataAsync();
+await indexService.LoadDataAsync();
+await etfService.LoadDataAsync();
+//await Task.WhenAll(
+//    stockService.LoadDataAsync(),
+//    indexService.LoadDataAsync(),
+//    etfService.LoadDataAsync()
+//);
+
 app.UseSession();
 app.UseStaticFiles();
 

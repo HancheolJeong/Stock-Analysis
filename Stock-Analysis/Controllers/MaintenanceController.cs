@@ -2,7 +2,7 @@
 
 namespace Stock_Analysis.Controllers
 {
-    public class ETNController : Controller
+    public class MaintenanceController : Controller
     {
         public IActionResult Index()
         {

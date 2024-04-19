@@ -9,18 +9,9 @@ using System.Threading.Tasks;
 namespace DataAccessLayer.Mappers
 {
 
-    public class ProcCall
+    public class ProcCall : IProcCall
     {
-        private string connectionString = "";
-
-        public ProcCall()
-        {
-            this.connectionString = "";
-        }
-        //public ProcCall(string conn)
-        //{
-        //    this.connectionString = conn;
-        //}
+        private string connectionString;
 
 
         public ProcCall(string conn)

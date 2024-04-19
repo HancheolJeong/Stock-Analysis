@@ -1,16 +1,16 @@
 ﻿@model List<DataAccessLayer.Models.AdvancedStock>
 
 @{
-    ViewData["Title"] = "KOSPI";
+    ViewData["Title"] = "KOSDAQ";
     Layout = "~/Views/Shared/_Layout.cshtml";
     int currentPage = ViewBag.CurrentPage;
     int totalPages = ViewBag.TotalPages;
 }
 
-<h1 class="text-center my-4">KOSPI</h1>
+<h1 class="text-center my-4">KOSDAQ</h1>
 
 <div class="container">
-    <form class="d-flex justify-content-center mb-4" action="@Url.Action("Search", "KOSPI")" method="get">
+    <form class="d-flex justify-content-center mb-4" action="@Url.Action("Search", "KOSDAQ")" method="get">
         <input class="form-control me-2" type="search" name="query" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success" type="submit">Search</button>
     </form>
@@ -31,7 +31,7 @@
             @for (int i = 0; i < Model.Count; i++)
             {
                 <tr class="@(i % 2 == 0 ? "table-primary" : "bg-white")">
-                    <td><a href="@Url.Action("Detail", "KOSPI", new { ticker = Model[i].ticker })">@Model[i].ticker</a></td>
+                    <td><a href="@Url.Action("Detail", "KOSDAQ", new { ticker = Model[i].ticker })">@Model[i].ticker</a></td>
                     <td>@Model[i].name</td>
                     <td>\@Model[i].closing_price.ToString("N0")</td>
                     <td>\@Model[i].market_value.ToString("N0")</td>
@@ -46,10 +46,10 @@
     <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-center">
             <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                <a class="page-link" href="@Url.Action("Index", "KOSPI", new { pageNumber = currentPage - 1 })">Previous</a>
+                <a class="page-link" href="@Url.Action("Index", "KOSDAQ", new { pageNumber = currentPage - 1 })">Previous</a>
             </li>
             <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                <a class="page-link" href="@Url.Action("Index", "KOSPI", new { pageNumber = currentPage + 1 })">Next</a>
+                <a class="page-link" href="@Url.Action("Index", "KOSDAQ", new { pageNumber = currentPage + 1 })">Next</a>
             </li>
         </ul>
     </nav>

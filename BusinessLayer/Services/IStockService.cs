@@ -19,5 +19,7 @@ namespace BusinessLayer.Services
         public List<AdvancedStock> SearchKOSPI(string query);
 
         public List<AdvancedStock> SearchKOSDAQ(string query);
+
+        public List<AdvancedStock> GetTopStocksByValue(string marketKey, string sortBy, int n);
     }
 }

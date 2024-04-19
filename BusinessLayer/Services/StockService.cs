@@ -41,7 +41,6 @@ namespace BusinessLayer.Services
             }
         }
 
-        //In-memory에 데이터를 로드합니다.
         public async Task LoadDataAsync()
         {
 
@@ -55,7 +54,6 @@ namespace BusinessLayer.Services
             _memoryCache.Set("KOSDAQ", kosdaqStocks, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromHours(1)));
         }
 
-        //데이터를 Inmomory에서 불러옵니다.
         public List<AdvancedStock> GetKOSPI(int pageNumber, int pageSize)
         {
             if (_memoryCache.TryGetValue("KOSPI", out List<AdvancedStock> stocks))
@@ -65,7 +63,6 @@ namespace BusinessLayer.Services
             return new List<AdvancedStock>();
         }
 
-        //데이터를 Inmomory에서 불러옵니다.
         public List<AdvancedStock> GetKOSDAQ(int pageNumber, int pageSize)
         {
             if (_memoryCache.TryGetValue("KOSDAQ", out List<AdvancedStock> stocks))
@@ -75,7 +72,6 @@ namespace BusinessLayer.Services
             return new List<AdvancedStock>();
         }
 
-        //페이지네이션이 가능한 페이지수를 리턴
         public int GetKOSPICount(int pageSize)
         {
             if (_memoryCache.TryGetValue("KOSPI", out List<AdvancedStock> stocks))
@@ -86,7 +82,6 @@ namespace BusinessLayer.Services
             return 1;
         }
 
-        //페이지네이션이 가능한 페이지수를 리턴
         public int GetKOSDAQCount(int pageSize)
         {
             if (_memoryCache.TryGetValue("KOSDAQ", out List<AdvancedStock> stocks))
@@ -96,7 +91,6 @@ namespace BusinessLayer.Services
             return 1;
         }
 
-        //데이터를 Inmemory에서 찾아서 불러옵니다.
         public List<AdvancedStock> SearchKOSPI(string query)
         {
             if (_memoryCache.TryGetValue("KOSPI", out List<AdvancedStock> stocks))
@@ -106,12 +100,27 @@ namespace BusinessLayer.Services
             return new List<AdvancedStock>();
         }
 
-        //데이터를 Inmemory에서 찾아서 불러옵니다.
         public List<AdvancedStock> SearchKOSDAQ(string query)
         {
             if (_memoryCache.TryGetValue("KOSDAQ", out List<AdvancedStock> stocks))
             {
                 return stocks.Where(s => s.name.Contains(query) || s.ticker.Contains(query)).ToList();
+            }
+            return new List<AdvancedStock>();
+        }
+        public List<AdvancedStock> GetTopStocksByValue(string marketKey, string sortBy, int n)
+        {
+            if (_memoryCache.TryGetValue(marketKey, out List<AdvancedStock> stocks))
+            {
+                switch (sortBy)
+                {
+                    case "marketCap":
+                        return stocks.OrderByDescending(s => s.market_value).Take(n).ToList();
+                    case "transactionAmount":
+                        return stocks.OrderByDescending(s => s.transaction_amount).Take(n).ToList();
+                    default:
+                        throw new ArgumentException("Invalid sort parameter. Use 'market_value' or 'transaction_amount'.");
+                }
             }
             return new List<AdvancedStock>();
         }
