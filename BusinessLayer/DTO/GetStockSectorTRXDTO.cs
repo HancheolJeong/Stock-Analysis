@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccessLayer.Models
+namespace BusinessLayer.DTO
 {
-    public class StockSectorTRX
+    public class GetStockSectorTRXDTO
     {
         public string ticker { get; set; } // 티커
         public DateOnly trade_date { get; set; } // 거래일

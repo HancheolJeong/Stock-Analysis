@@ -9,6 +9,9 @@
 
 <h1 class="text-center my-4">KOSPI</h1>
 
+
+
+
 <div class="container">
     <form class="d-flex justify-content-center mb-4" action="@Url.Action("Search", "KOSPI")" method="get">
         <input class="form-control me-2" type="search" name="query" placeholder="Search" aria-label="Search">
@@ -31,7 +34,7 @@
             @for (int i = 0; i < Model.Count; i++)
             {
                 <tr class="@(i % 2 == 0 ? "table-primary" : "bg-white")">
-                    <td><a href="@Url.Action("Detail", "KOSPI", new { ticker = Model[i].ticker })">@Model[i].ticker</a></td>
+                    <td><a href="@Url.Action("ohlcv", "KOSPI", new { ticker = Model[i].ticker, axisy = "closing_price" })">@Model[i].ticker</a></td>
                     <td>@Model[i].name</td>
                     <td>\@Model[i].closing_price.ToString("N0")</td>
                     <td>\@Model[i].market_value.ToString("N0")</td>

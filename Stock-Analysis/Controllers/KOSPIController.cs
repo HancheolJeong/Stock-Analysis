@@ -1,6 +1,7 @@
 ﻿using BusinessLayer.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Drawing.Printing;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Stock_Analysis.Controllers
 {
@@ -8,6 +9,7 @@ namespace Stock_Analysis.Controllers
     {
         private readonly IStockService _stockService;
         private const int _PageSize = 100;
+        private const string _market = "KOSPI";
         public KOSPIController(IStockService service)
         {
             _stockService = service;
@@ -40,45 +42,65 @@ namespace Stock_Analysis.Controllers
             return View(stocks);
         }
 
-        [HttpGet("KOSPI/Detail")]
-        public IActionResult Detail(string ticker)
-        {
-            // 여기서 ticker에 해당하는 종목의 상세 정보를 가져오는 로직을 추가하시면 됩니다.
-            //var stockDetail = _stockService.GetStockDetail(ticker); // 예시로 _stockService에서 GetStockDetail 메서드를 호출하였습니다.
-
-            // 가져온 상세 정보를 view에 전달합니다.
-            //return View(stockDetail);
-            return View();
-        }
 
         [HttpGet("KOSPI/ohlcv")]
-        public IActionResult OHLCV(string ticker)
+        public async Task<IActionResult> OHLCV(string ticker, string axisy)
         {
-            return View();
+            var stocks = await _stockService.GetStockOHLCV(ticker);
+            string name = _stockService.GetNameByTicker(_market ,ticker);
+            ViewBag.name = name;
+            ViewBag.ticker = ticker;
+            ViewBag.market = _market; 
+            ViewBag.axisy = axisy;
+            return View(stocks);
         }
 
         [HttpGet("KOSPI/fundamental")]
-        public IActionResult Fundamental(string ticker)
+        public async Task<IActionResult> Fundamental(string ticker, string axisy)
         {
-            return View();
+            var stocks = await _stockService.GetStockFundamental(ticker);
+            string name = _stockService.GetNameByTicker(_market, ticker);
+            ViewBag.name = name;
+            ViewBag.ticker = ticker;
+            ViewBag.market = _market;
+            ViewBag.axisy = axisy;
+            return View(stocks);
         }
 
         [HttpGet("KOSPI/marketcap")]
-        public IActionResult MarketCap(string ticker)
+        public async Task<IActionResult> MarketCap(string ticker, string axisy)
         {
-            return View();
+            var stocks = await _stockService.GetStockMarketCap(ticker);
+            string name = _stockService.GetNameByTicker(_market, ticker);
+            ViewBag.name = name;
+            ViewBag.ticker = ticker;
+            ViewBag.market = _market;
+            ViewBag.axisy = axisy;
+            return View(stocks);
         }
 
         [HttpGet("KOSPI/markettrx")]
-        public IActionResult MarketTRX(string ticker)
+        public async Task<IActionResult> MarketTRX(string ticker, string axisy)
         {
-            return View();
+            var stocks = await _stockService.GetStockMarketTRX(ticker);
+            string name = _stockService.GetNameByTicker(_market, ticker);
+            ViewBag.name = name;
+            ViewBag.ticker = ticker;
+            ViewBag.market = _market;
+            ViewBag.axisy = axisy;
+            return View(stocks);
         }
 
         [HttpGet("KOSPI/sectortrx")]
-        public IActionResult SectorTRX(string ticker)
+        public async Task<IActionResult> SectorTRX(string ticker, string axisy)
         {
-            return View();
+            var stocks = await _stockService.GetStockSectorTRX(ticker);
+            string name = _stockService.GetNameByTicker(_market, ticker);
+            ViewBag.name = name;
+            ViewBag.ticker = ticker;
+            ViewBag.market = _market;
+            ViewBag.axisy = axisy;
+            return View(stocks);
         }
 
     }

@@ -7,6 +7,7 @@ namespace Stock_Analysis.Controllers
     {
         private readonly IStockService _stockService;
         private const int _PageSize = 100;
+        private const string _market = "KOSDAQ";
         public KOSDAQController(IStockService service)
         {
             _stockService = service;
@@ -53,6 +54,69 @@ namespace Stock_Analysis.Controllers
             // 가져온 상세 정보를 view에 전달합니다.
             //return View(stockDetail);
             return View();
+        }
+
+
+
+
+        [HttpGet("KOSDAQ/ohlcv")]
+        public async Task<IActionResult> OHLCV(string ticker, string axisy)
+        {
+            var stocks = await _stockService.GetStockOHLCV(ticker);
+            string name = _stockService.GetNameByTicker(_market, ticker);
+            ViewBag.name = name;
+            ViewBag.ticker = ticker;
+            ViewBag.market = _market;
+            ViewBag.axisy = axisy;
+            return View(stocks);
+        }
+
+        [HttpGet("KOSDAQ/fundamental")]
+        public async Task<IActionResult> Fundamental(string ticker, string axisy)
+        {
+            var stocks = await _stockService.GetStockFundamental(ticker);
+            string name = _stockService.GetNameByTicker(_market, ticker);
+            ViewBag.name = name;
+            ViewBag.ticker = ticker;
+            ViewBag.market = _market;
+            ViewBag.axisy = axisy;
+            return View(stocks);
+        }
+
+        [HttpGet("KOSDAQ/marketcap")]
+        public async Task<IActionResult> MarketCap(string ticker, string axisy)
+        {
+            var stocks = await _stockService.GetStockMarketCap(ticker);
+            string name = _stockService.GetNameByTicker(_market, ticker);
+            ViewBag.name = name;
+            ViewBag.ticker = ticker;
+            ViewBag.market = _market;
+            ViewBag.axisy = axisy;
+            return View(stocks);
+        }
+
+        [HttpGet("KOSDAQ/markettrx")]
+        public async Task<IActionResult> MarketTRX(string ticker, string axisy)
+        {
+            var stocks = await _stockService.GetStockMarketTRX(ticker);
+            string name = _stockService.GetNameByTicker(_market, ticker);
+            ViewBag.name = name;
+            ViewBag.ticker = ticker;
+            ViewBag.market = _market;
+            ViewBag.axisy = axisy;
+            return View(stocks);
+        }
+
+        [HttpGet("KOSDAQ/sectortrx")]
+        public async Task<IActionResult> SectorTRX(string ticker, string axisy)
+        {
+            var stocks = await _stockService.GetStockSectorTRX(ticker);
+            string name = _stockService.GetNameByTicker(_market, ticker);
+            ViewBag.name = name;
+            ViewBag.ticker = ticker;
+            ViewBag.market = _market;
+            ViewBag.axisy = axisy;
+            return View(stocks);
         }
     }
 }

@@ -1,0 +1,223 @@
+﻿@using System.Web
+@model List<BusinessLayer.DTO.GetStockFundamentalDTO>
+@{
+    ViewData["Title"] = "Fundamental";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string ticker = ViewBag.ticker;
+    string market = ViewBag.market;
+    string axisy = ViewBag.axisy;
+    string name = ViewBag.name;
+
+    Func<BusinessLayer.DTO.GetStockFundamentalDTO, object> selector = null;
+
+    switch (axisy)
+    {
+        case "bps":
+            selector = stock => stock.bps;
+            break;
+        case "per":
+            selector = stock => stock.per;
+            break;
+        case "pbr":
+            selector = stock => stock.pbr;
+            break;
+        case "eps":
+            selector = stock => stock.eps;
+            break;
+        case "div_yield":
+            selector = stock => stock.div_yield;
+            break;
+        case "dps":
+            selector = stock => stock.dps;
+            break;
+
+    }
+
+    var dataPoints = Model.Select(selector).ToList();
+    var dataJson = Newtonsoft.Json.JsonConvert.SerializeObject(dataPoints);
+}
+<div class="d-flex justify-content-between align-items-center my-4 w-100">
+    <div class="flex-grow-1 text-center">
+        <h1 class="mb-0">@ViewBag.name (@ViewBag.ticker)@ViewBag.Query</h1>
+    </div>
+    <button id="myBtn" class="btn btn-primary">포트폴리오 추가</button>
+</div>
+
+<div class="modal" id="myModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add to Portfolio</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="portfolioForm">
+                    <div class="form-group">
+                        <label for="quantity">개수</label>
+                        <input type="number" class="form-control" id="quantity" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="price">단가</label>
+                        <input type="number" class="form-control" id="price" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="submitPortfolio()">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+        $("#myBtn").click(function () {
+            $("#myModal").modal('show');
+        });
+
+        $(".close").click(function () {
+            $("#myModal").modal('hide');
+        });
+    });
+
+    $(window).click(function (event) {
+        if (event.target == $("#myModal")[0]) {
+            $("#myModal").modal('hide');
+        }
+    });
+    function submitPortfolio() {
+        var quantity = $('#quantity').val();
+        var price = $('#price').val();
+        var ticker = '@ticker';
+        var market = '@market';
+
+        $.ajax({
+            type: "POST",
+            url: "/portfolio/add",
+            data: { quantity: quantity, price: price, ticker: ticker, market: market },
+            success: function (response) {
+                if (response.success) {
+                    alert('포트폴리오에 추가되었습니다.');
+                    $('#myModal').modal('hide');
+                } else {
+                    alert(response.message || '에러가 발생했습니다.');
+                }
+            },
+            error: function () {
+                alert('통신 중 에러가 발생했습니다.');
+            }
+        });
+    }
+</script>
+
+
+
+
+<ul class="nav nav-tabs justify-content-center mb-4">
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("OHLCV", "Kosdaq", new { ticker = ticker, axisy = "closing_price" })">OHLCV</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("Fundamental", "Kosdaq", new { ticker = ticker, axisy = "bps" })">Fundamental</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("MarketTrx", "Kosdaq", new { ticker = ticker, axisy = "institution" })">Market Transactions</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("SectorTrx", "Kosdaq", new { ticker = ticker, axisy = "financial_investment" })">Sector Transactions</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("MarketCap", "Kosdaq", new { ticker = ticker, axisy = "market_value" })">Market Capitalization</a>
+    </li>
+</ul>
+
+
+<div class="centered-container">
+    <canvas id="chart" width="1600" height="900"></canvas>
+</div>
+
+
+
+
+<script charset="UTF-8">
+    document.addEventListener('DOMContentLoaded', function () {
+        const tradeDates = @Html.Raw(Json.Serialize(Model.Select(m => m.trade_date.ToShortDateString())));
+        const y = @Html.Raw(dataJson);
+        const title = '@axisy';
+        const dataSets = [{
+            data: y,
+            label: title,
+            borderColor: "#3e95cd",
+            fill: false,
+            lineTension: 0.1
+        }];
+        createLineChart('chart', tradeDates, dataSets, 'World population per region (in millions)');
+    });
+</script>
+
+
+
+
+
+
+
+<ul class="nav nav-tabs justify-content-center">
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("Fundamental", "Kosdaq", new { ticker = ticker, axisy = "bps" })">bps</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("Fundamental", "Kosdaq", new { ticker = ticker, axisy = "per" })">per</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("Fundamental", "Kosdaq", new { ticker = ticker, axisy = "pbr" })">pbr</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("Fundamental", "Kosdaq", new { ticker = ticker, axisy = "eps" })">eps</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("Fundamental", "Kosdaq", new { ticker = ticker, axisy = "div_yield" })">배당수익률</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("Fundamental", "Kosdaq", new { ticker = ticker, axisy = "dps" })">주당배당금</a>
+    </li>
+</ul>
+
+
+
+
+
+
+
+<div class="scrollable-table">
+    <table class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>bps</th>
+                <th>per</th>
+                <th>pbr</th>
+                <th>eps</th>
+                <th>배당수익률</th>
+                <th>주당배당금</th>
+                <th>거래일</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var stock in Model)
+            {
+                <tr>
+                    <td>@stock.bps.ToString("N0")</td>
+                    <td>@stock.per.ToString("N2")</td>
+                    <td>@stock.pbr.ToString("N2")</td>
+                    <td>@stock.eps.ToString("N0")</td>
+                    <td>@stock.div_yield.ToString("N0")</td>
+                    <td>@stock.dps.ToString("N2")</td>
+                    <td>@stock.trade_date.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

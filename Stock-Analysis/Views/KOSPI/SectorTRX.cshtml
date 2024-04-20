@@ -1,0 +1,265 @@
+﻿@using System.Web
+@model List<BusinessLayer.DTO.GetStockSectorTRXDTO>
+@{
+    ViewData["Title"] = "SectorTRX";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string ticker = ViewBag.ticker;
+    string market = ViewBag.market;
+    string axisy = ViewBag.axisy;
+    string name = ViewBag.name;
+
+    Func<BusinessLayer.DTO.GetStockSectorTRXDTO, object> selector = null;
+
+    switch (axisy)
+    {
+        case "financial_investment":
+            selector = stock => stock.financial_investment;
+            break;
+        case "insurance":
+            selector = stock => stock.insurance;
+            break;
+        case "investment_trust":
+            selector = stock => stock.investment_trust;
+            break;
+        case "private_equity":
+            selector = stock => stock.private_equity;
+            break;
+        case "bank":
+            selector = stock => stock.bank;
+            break;
+        case "other_financial":
+            selector = stock => stock.other_financial;
+            break;
+        case "pension_fund":
+            selector = stock => stock.pension_fund;
+            break;
+        case "other_corporation":
+            selector = stock => stock.other_corporation;
+            break;
+        case "individual":
+            selector = stock => stock.individual;
+            break;
+        case "foreigner":
+            selector = stock => stock.foreigner;
+            break;
+        case "other_foreigner":
+            selector = stock => stock.other_foreigner;
+            break;
+
+    }
+
+    var dataPoints = Model.Select(selector).ToList();
+    var dataJson = Newtonsoft.Json.JsonConvert.SerializeObject(dataPoints);
+}
+
+<div class="d-flex justify-content-between align-items-center my-4 w-100">
+    <div class="flex-grow-1 text-center">
+        <h1 class="mb-0">@ViewBag.name (@ViewBag.ticker)@ViewBag.Query</h1>
+    </div>
+    <button id="myBtn" class="btn btn-primary">포트폴리오 추가</button>
+</div>
+
+
+
+
+
+<div class="modal" id="myModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add to Portfolio</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="portfolioForm">
+                    <div class="form-group">
+                        <label for="quantity">개수</label>
+                        <input type="number" class="form-control" id="quantity" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="price">단가</label>
+                        <input type="number" class="form-control" id="price" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="submitPortfolio()">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script>
+    $(document).ready(function () {
+        $("#myBtn").click(function () {
+            $("#myModal").modal('show');
+        });
+
+        $(".close").click(function () {
+            $("#myModal").modal('hide');
+        });
+    });
+
+    $(window).click(function (event) {
+        if (event.target == $("#myModal")[0]) {
+            $("#myModal").modal('hide');
+        }
+    });
+    function submitPortfolio() {
+        var quantity = $('#quantity').val();
+        var price = $('#price').val();
+        var ticker = '@ticker';
+        var market = '@market';
+
+        $.ajax({
+            type: "POST",
+            url: "/portfolio/add",
+            data: { quantity: quantity, price: price, ticker: ticker, market: market },
+            success: function (response) {
+                if (response.success) {
+                    alert('포트폴리오에 추가되었습니다.');
+                    $('#myModal').modal('hide');
+                } else {
+                    alert(response.message || '에러가 발생했습니다.');
+                }
+            },
+            error: function () {
+                alert('통신 중 에러가 발생했습니다.');
+            }
+        });
+    }
+</script>
+
+
+
+
+
+
+
+<ul class="nav nav-tabs justify-content-center mb-4">
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("OHLCV", "Kospi", new { ticker = ticker, axisy = "closing_price" })">OHLCV</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("Fundamental", "Kospi", new { ticker = ticker, axisy = "bps" })">Fundamental</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("MarketTrx", "Kospi", new { ticker = ticker, axisy = "institution" })">Market Transactions</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("SectorTrx", "Kospi", new { ticker = ticker, axisy = "financial_investment" })">Sector Transactions</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("MarketCap", "Kospi", new { ticker = ticker, axisy = "market_value" })">Market Capitalization</a>
+    </li>
+</ul>
+
+
+
+
+<div class="centered-container">
+    <canvas id="chart" width="1600" height="900"></canvas>
+</div>
+
+
+
+<script charset="UTF-8">
+    document.addEventListener('DOMContentLoaded', function () {
+        const tradeDates = @Html.Raw(Json.Serialize(Model.Select(m => m.trade_date.ToShortDateString())));
+        const y = @Html.Raw(dataJson);
+        const title = '@axisy';
+        const dataSets = [{
+            data: y,
+            label: title,
+            borderColor: "#3e95cd",
+            fill: false,
+            lineTension: 0.1
+        }];
+        createLineChart('chart', tradeDates, dataSets, 'World population per region (in millions)');
+    });
+</script>
+
+
+
+
+<ul class="nav nav-tabs justify-content-center">
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("SectorTrx", "Kospi", new { ticker = ticker, axisy = "financial_investment" })">금융투자</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("SectorTrx", "Kospi", new { ticker = ticker, axisy = "insurance" })">보험</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("SectorTrx", "Kospi", new { ticker = ticker, axisy = "investment_trust" })">투신</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("SectorTrx", "Kospi", new { ticker = ticker, axisy = "private_equity" })">사모펀드</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("SectorTrx", "Kospi", new { ticker = ticker, axisy = "bank" })">은행</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("SectorTrx", "Kospi", new { ticker = ticker, axisy = "other_financial" })">기타금융</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("SectorTrx", "Kospi", new { ticker = ticker, axisy = "pension_fund" })">연기금</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("SectorTrx", "Kospi", new { ticker = ticker, axisy = "other_corporation" })">기타법인</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("SectorTrx", "Kospi", new { ticker = ticker, axisy = "individual" })">개인</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("SectorTrx", "Kospi", new { ticker = ticker, axisy = "foreigner" })">외국인</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@Url.Action("SectorTrx", "Kospi", new { ticker = ticker, axisy = "other_foreigner" })">기타외국인</a>
+    </li>
+</ul>
+
+
+<div class="scrollable-table">
+    <table class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>금융투자</th>
+                <th>보험</th>
+                <th>투신</th>
+                <th>사모펀드</th>
+                <th>은행</th>
+                <th>기타금융</th>
+                <th>연기금</th>
+                <th>기타법인</th>
+                <th>개인</th>
+                <th>외국인</th>
+                <th>기타외국인</th>
+                <th>거래일</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var stock in Model)
+            {
+                <tr>
+                    <td>@stock.financial_investment.ToString("N0")</td>
+                    <td>@stock.insurance.ToString("N0")</td>
+                    <td>@stock.investment_trust.ToString("N0")</td>
+                    <td>@stock.private_equity.ToString("N0")</td>
+                    <td>@stock.bank.ToString("N0")</td>
+                    <td>@stock.other_financial.ToString("N0")</td>
+                    <td>@stock.pension_fund.ToString("N0")</td>
+                    <td>@stock.other_corporation.ToString("N0")</td>
+                    <td>@stock.individual.ToString("N0")</td>
+                    <td>@stock.foreigner.ToString("N0")</td>
+                    <td>@stock.trade_date.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

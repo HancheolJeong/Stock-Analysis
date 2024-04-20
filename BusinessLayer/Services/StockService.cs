@@ -56,6 +56,20 @@ namespace BusinessLayer.Services
             _memoryCache.Set("KOSDAQ", kosdaqStocks, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromHours(1)));
         }
 
+        public string GetNameByTicker(string market, string ticker)
+        {
+            if (_memoryCache.TryGetValue("KOSPI", out List<GetAdvancedStockDTO> stocks))
+            {
+                // LINQ를 사용하여 ticker와 일치하는 첫 번째 주식을 찾고, 해당 주식의 이름을 반환
+                var stock = stocks.FirstOrDefault(s => s.ticker == ticker);
+                if (stock != null)
+                {
+                    return stock.name;
+                }
+            }
+            return "Not found"; // 일치하는 주식이 없을 경우 "Not found" 반환
+        }
+
         public List<GetAdvancedStockDTO> GetKOSPI(int pageNumber, int pageSize)
         {
             if (_memoryCache.TryGetValue("KOSPI", out List<GetAdvancedStockDTO> stocks))
@@ -126,5 +140,102 @@ namespace BusinessLayer.Services
             }
             return new List<GetAdvancedStockDTO>();
         }
+
+
+        public async Task<List<GetStockOHLCVDTO>> GetStockOHLCV(string ticker)
+        {
+            try
+            {
+                var configuration = new MapperConfiguration(cfg => cfg.CreateMap<StockOHLCV, GetStockOHLCVDTO>());
+                Mapper mapper = new Mapper(configuration);
+
+                List<StockOHLCV> list = await stockMapper.GetStockOHLCV(ticker);
+
+
+                List<GetStockOHLCVDTO> dtoList = mapper.Map<List<StockOHLCV>, List<GetStockOHLCVDTO>>(list);
+                return dtoList;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<GetStockFundamentalDTO>> GetStockFundamental(string ticker)
+        {
+            try
+            {
+                var configuration = new MapperConfiguration(cfg => cfg.CreateMap<StockFundamental, GetStockFundamentalDTO>());
+                Mapper mapper = new Mapper(configuration);
+
+                List<StockFundamental> list = await stockMapper.GetStockFundamental(ticker);
+
+
+                List<GetStockFundamentalDTO> dtoList = mapper.Map<List<StockFundamental>, List<GetStockFundamentalDTO>>(list);
+                return dtoList;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<GetStockMarketCapDTO>> GetStockMarketCap(string ticker)
+        {
+            try
+            {
+                var configuration = new MapperConfiguration(cfg => cfg.CreateMap<StockMarketCap, GetStockMarketCapDTO>());
+                Mapper mapper = new Mapper(configuration);
+
+                List<StockMarketCap> list = await stockMapper.GetStockMarketCap(ticker);
+
+
+                List<GetStockMarketCapDTO> dtoList = mapper.Map<List<StockMarketCap>, List<GetStockMarketCapDTO>>(list);
+                return dtoList;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<GetStockMarketTRXDTO>> GetStockMarketTRX(string ticker)
+        {
+            try
+            {
+                var configuration = new MapperConfiguration(cfg => cfg.CreateMap<StockMarketTRX, GetStockMarketTRXDTO>());
+                Mapper mapper = new Mapper(configuration);
+
+                List<StockMarketTRX> list = await stockMapper.GetStockMarketTRX(ticker);
+
+
+                List<GetStockMarketTRXDTO> dtoList = mapper.Map<List<StockMarketTRX>, List<GetStockMarketTRXDTO>>(list);
+                return dtoList;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public async Task<List<GetStockSectorTRXDTO>> GetStockSectorTRX(string ticker)
+        {
+            try
+            {
+                var configuration = new MapperConfiguration(cfg => cfg.CreateMap<StockSectorTRX, GetStockSectorTRXDTO>());
+                Mapper mapper = new Mapper(configuration);
+
+                List<StockSectorTRX> list = await stockMapper.GetStockSectorTRX(ticker);
+
+
+                List<GetStockSectorTRXDTO> dtoList = mapper.Map<List<StockSectorTRX>, List<GetStockSectorTRXDTO>>(list);
+                return dtoList;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
     }
 }
