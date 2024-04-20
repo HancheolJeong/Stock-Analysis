@@ -9,17 +9,17 @@ namespace BusinessLayer.Services
 
         public Task LoadDataAsync();
 
-        public List<AdvancedStock> GetKOSPI(int pageNumber, int pageSize);
+        public List<GetAdvancedStockDTO> GetKOSPI(int pageNumber, int pageSize);
 
-        public List<AdvancedStock> GetKOSDAQ(int pageNumber, int pageSize);
+        public List<GetAdvancedStockDTO> GetKOSDAQ(int pageNumber, int pageSize);
 
         public int GetKOSPICount(int pageSize);
         public int GetKOSDAQCount(int pageSize);
 
-        public List<AdvancedStock> SearchKOSPI(string query);
+        public List<GetAdvancedStockDTO> SearchKOSPI(string query);
 
-        public List<AdvancedStock> SearchKOSDAQ(string query);
+        public List<GetAdvancedStockDTO> SearchKOSDAQ(string query);
 
-        public List<AdvancedStock> GetTopStocksByValue(string marketKey, string sortBy, int n);
+        public List<GetAdvancedStockDTO> GetTopStocksByValue(string marketKey, string sortBy, int n);
     }
 }

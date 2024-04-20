@@ -24,24 +24,26 @@ namespace BusinessLayer.Services
         {
 
             var configuration = new MapperConfiguration(cfg => cfg.CreateMap<IndexData, GetIndexDTO>());
+            Mapper mapper = new Mapper(configuration);
 
             List<IndexData> list = await indexMapper.GetIndexData();
+            List<GetIndexDTO> dtoList = mapper.Map<List<IndexData>, List<GetIndexDTO>>(list);
 
-            _memoryCache.Set("INDEX", list, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromHours(25)));
+            _memoryCache.Set("INDEX", dtoList, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromHours(25)));
         }
 
-        public List<IndexData> GetIndex(int pageNumber, int pageSize)
+        public List<GetIndexDTO> GetIndex(int pageNumber, int pageSize)
         {
-            if (_memoryCache.TryGetValue("INDEX", out List<IndexData> indexes))
+            if (_memoryCache.TryGetValue("INDEX", out List<GetIndexDTO> indexes))
             {
                 return indexes.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             }
-            return new List<IndexData>();
+            return new List<GetIndexDTO>();
         }
 
         public int GetIndexCount(int pageSize)
         {
-            if (_memoryCache.TryGetValue("INDEX", out List<IndexData> indexes))
+            if (_memoryCache.TryGetValue("INDEX", out List<GetIndexDTO> indexes))
             {
                 int result = (int)Math.Ceiling(indexes.Count() / (double)pageSize);
                 return result;
@@ -49,18 +51,18 @@ namespace BusinessLayer.Services
             return 1;
         }
 
-        public List<IndexData> SearchIndex(string query)
+        public List<GetIndexDTO> SearchIndex(string query)
         {
-            if (_memoryCache.TryGetValue("INDEX", out List<IndexData> indexes))
+            if (_memoryCache.TryGetValue("INDEX", out List<GetIndexDTO> indexes))
             {
                 return indexes.Where(s => s.name.Contains(query) || s.ticker.Contains(query)).ToList();
             }
-            return new List<IndexData>();
+            return new List<GetIndexDTO>();
         }
 
         public decimal SearchIndexByTicker(string ticker)
         {
-            if (_memoryCache.TryGetValue("INDEX", out List<IndexData> indexes))
+            if (_memoryCache.TryGetValue("INDEX", out List<GetIndexDTO> indexes))
             {
                 var index = indexes
                             .Where(s => s.ticker == ticker)

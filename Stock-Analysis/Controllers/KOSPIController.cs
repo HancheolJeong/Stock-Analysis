@@ -50,5 +50,36 @@ namespace Stock_Analysis.Controllers
             //return View(stockDetail);
             return View();
         }
+
+        [HttpGet("KOSPI/ohlcv")]
+        public IActionResult OHLCV(string ticker)
+        {
+            return View();
+        }
+
+        [HttpGet("KOSPI/fundamental")]
+        public IActionResult Fundamental(string ticker)
+        {
+            return View();
+        }
+
+        [HttpGet("KOSPI/marketcap")]
+        public IActionResult MarketCap(string ticker)
+        {
+            return View();
+        }
+
+        [HttpGet("KOSPI/markettrx")]
+        public IActionResult MarketTRX(string ticker)
+        {
+            return View();
+        }
+
+        [HttpGet("KOSPI/sectortrx")]
+        public IActionResult SectorTRX(string ticker)
+        {
+            return View();
+        }
+
     }
 }

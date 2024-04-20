@@ -25,25 +25,27 @@ namespace BusinessLayer.Services
         {
 
             var configuration = new MapperConfiguration(cfg => cfg.CreateMap<ETF, GetETFDTO>());
+            Mapper mapper = new Mapper(configuration);
 
             List<ETF> list = await etfMapper.GetETFData();
+            List<GetETFDTO> dtoList = mapper.Map<List<ETF>, List<GetETFDTO>>(list);
 
-            _memoryCache.Set("ETF", list, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromHours(25)));
+            _memoryCache.Set("ETF", dtoList, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromHours(25)));
         }
 
         //데이터를 Inmomory에서 불러옵니다.
-        public List<ETF> GetETF(int pageNumber, int pageSize)
+        public List<GetETFDTO> GetETF(int pageNumber, int pageSize)
         {
-            if (_memoryCache.TryGetValue("ETF", out List<ETF> etfs))
+            if (_memoryCache.TryGetValue("ETF", out List<GetETFDTO> etfs))
             {
                 return etfs.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             }
-            return new List<ETF>();
+            return new List<GetETFDTO>();
         }
 
         public int GetETFCount(int pageSize)
         {
-            if (_memoryCache.TryGetValue("ETF", out List<ETF> indexes))
+            if (_memoryCache.TryGetValue("ETF", out List<GetETFDTO> indexes))
             {
                 int result = (int)Math.Ceiling(indexes.Count() / (double)pageSize);
                 return result;
@@ -51,13 +53,13 @@ namespace BusinessLayer.Services
             return 1;
         }
 
-        public List<ETF> SearchETF(string query)
+        public List<GetETFDTO> SearchETF(string query)
         {
-            if (_memoryCache.TryGetValue("ETF", out List<ETF> etfs))
+            if (_memoryCache.TryGetValue("ETF", out List<GetETFDTO> etfs))
             {
                 return etfs.Where(s => s.name.Contains(query) || s.ticker.Contains(query)).ToList();
             }
-            return new List<ETF>();
+            return new List<GetETFDTO>();
         }
     }
 }
