@@ -58,7 +58,7 @@ namespace BusinessLayer.Services
 
         public string GetNameByTicker(string market, string ticker)
         {
-            if (_memoryCache.TryGetValue("KOSPI", out List<GetAdvancedStockDTO> stocks))
+            if (_memoryCache.TryGetValue(market, out List<GetAdvancedStockDTO> stocks))
             {
                 // LINQ를 사용하여 ticker와 일치하는 첫 번째 주식을 찾고, 해당 주식의 이름을 반환
                 var stock = stocks.FirstOrDefault(s => s.ticker == ticker);
@@ -67,7 +67,7 @@ namespace BusinessLayer.Services
                     return stock.name;
                 }
             }
-            return "Not found"; // 일치하는 주식이 없을 경우 "Not found" 반환
+            return "Not found";
         }
 
         public List<GetAdvancedStockDTO> GetKOSPI(int pageNumber, int pageSize)
@@ -77,6 +77,16 @@ namespace BusinessLayer.Services
                 return stocks.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             }
             return new List<GetAdvancedStockDTO>();
+        }
+
+        public int GetCountByDTO(ref List<GetAdvancedStockDTO> stocks, int pageSize)
+        {
+            if (stocks != null && stocks.Count > 0)
+            {
+                int result = (int)Math.Ceiling(stocks.Count / (double)pageSize);
+                return result;
+            }
+            return 1;
         }
 
         public List<GetAdvancedStockDTO> GetKOSDAQ(int pageNumber, int pageSize)

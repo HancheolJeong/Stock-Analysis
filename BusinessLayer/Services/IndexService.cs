@@ -51,6 +51,16 @@ namespace BusinessLayer.Services
             return 1;
         }
 
+        public int GetCountByDTO(ref List<GetIndexDTO> stocks, int pageSize)
+        {
+            if (stocks != null && stocks.Count > 0)
+            {
+                int result = (int)Math.Ceiling(stocks.Count / (double)pageSize);
+                return result;
+            }
+            return 1;
+        }
+
         public List<GetIndexDTO> SearchIndex(string query)
         {
             if (_memoryCache.TryGetValue("INDEX", out List<GetIndexDTO> indexes))
@@ -76,5 +86,39 @@ namespace BusinessLayer.Services
             }
             throw new Exception("No data found for the given ticker or cache is empty.");
         }
+
+        public async Task<List<GetIndexOHLCVDTO>> GetIndexOHLCV(string ticker)
+        {
+            try
+            {
+                var configuration = new MapperConfiguration(cfg => cfg.CreateMap<IndexOHLCV, GetIndexOHLCVDTO>());
+                Mapper mapper = new Mapper(configuration);
+
+                List<IndexOHLCV> list = await indexMapper.GetIndexOHLCV(ticker);
+
+
+                List<GetIndexOHLCVDTO> dtoList = mapper.Map<List<IndexOHLCV>, List<GetIndexOHLCVDTO>>(list);
+                return dtoList;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+        public string GetNameByTicker(string ticker)
+        {
+            if (_memoryCache.TryGetValue("INDEX", out List<GetIndexDTO> stocks))
+            {
+                // LINQ를 사용하여 ticker와 일치하는 첫 번째 주식을 찾고, 해당 주식의 이름을 반환
+                var stock = stocks.FirstOrDefault(s => s.ticker == ticker);
+                if (stock != null)
+                {
+                    return stock.name;
+                }
+            }
+            return "Not found";
+        }
+
     }
 }

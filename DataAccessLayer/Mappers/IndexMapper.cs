@@ -81,5 +81,52 @@ ORDER BY
             }
             return list;
         }
+
+
+        public async Task<List<IndexOHLCV>> GetIndexOHLCV(string ticker)
+        {
+            List<IndexOHLCV> list = new List<IndexOHLCV>();
+            try
+            {
+                using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+                {
+                    await sqlConnection.OpenAsync();
+                    string query = @"SELECT * FROM stock.indexes_ohlcv WHERE ticker = @Ticker ORDER BY trade_date ASC";
+
+                    using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
+                    {
+                        sqlCommand.Parameters.AddWithValue("@Ticker", ticker);
+                        using (SqlDataReader reader = await sqlCommand.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                IndexOHLCV indexOHLCV = new IndexOHLCV
+                                {
+                                    ticker = reader.GetString(reader.GetOrdinal("ticker")),
+                                    trade_date = DateOnly.FromDateTime((DateTime)reader["trade_date"]),
+                                    opening_price = reader.GetDecimal(reader.GetOrdinal("opening_price")),
+                                    high_price = reader.GetDecimal(reader.GetOrdinal("high_price")),
+                                    low_price = reader.GetDecimal(reader.GetOrdinal("low_price")),
+                                    closing_price = reader.GetDecimal(reader.GetOrdinal("closing_price")),
+                                    trading_volume = reader.GetInt64(reader.GetOrdinal("trading_volume")),
+                                    transaction_amount = reader.GetInt64(reader.GetOrdinal("transaction_amount")),
+                                    market_value = reader.GetInt64(reader.GetOrdinal("market_value")),
+                                };
+                                list.Add(indexOHLCV);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Ideally, log this exception
+                throw new Exception("An error occurred while retrieving stocks.", ex);
+            }
+            return list;
+        }
+
+
+
     }
 }

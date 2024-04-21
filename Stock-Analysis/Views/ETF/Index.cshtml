@@ -11,14 +11,17 @@
 
 <div class="container">
     <form class="d-flex justify-content-center mb-4" action="@Url.Action("Search", "ETF")" method="get">
-        <input class="form-control me-2" type="search" name="query" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
+        <div class="col-md-6 d-flex">
+            <input class="form-control me-2" type="search" name="query" placeholder="Search" aria-label="Search">
+            <input type="hidden" name="pagenumber" value="1">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+        </div>
     </form>
 
     <table class="table table-hover">
         <thead class="table-light">
             <tr>
-                <th>종목번호</th>
+                <th>티커</th>
                 <th>종목명</th>
                 <th>종가</th>
                 <th>거래량</th>
@@ -30,7 +33,7 @@
             @for (int i = 0; i < Model.Count; i++)
             {
                 <tr class="@(i % 2 == 0 ? "table-primary" : "bg-white")">
-                    <td><a href="@Url.Action("Detail", "ETF", new { ticker = Model[i].ticker })">@Model[i].ticker</a></td>
+                    <td><a href="@Url.Action("OHLCV", "ETF", new { ticker = Model[i].ticker, axisy="closing_price" })">@Model[i].ticker</a></td>
                     <td>@Model[i].name</td>
                     <td>\@Model[i].closing_price.ToString("N0")</td>
                     <td>@Model[i].trading_volume.ToString("N0")</td>

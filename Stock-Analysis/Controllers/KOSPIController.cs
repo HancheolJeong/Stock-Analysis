@@ -19,27 +19,39 @@ namespace Stock_Analysis.Controllers
         {
             var stocks = _stockService.GetKOSPI(pageNumber, _PageSize);
             int totalPages = _stockService.GetKOSPICount(_PageSize);
-            if(pageNumber == 1) // 무한루프로 빠지는 것을 막기 위한 로직
+            ViewBag.CurrentPage = pageNumber;
+            ViewBag.TotalPages = totalPages;
+            if (pageNumber == 1) // 무한루프로 빠지는 것을 막기 위한 로직
             {
-                ViewBag.CurrentPage = pageNumber;
-                ViewBag.TotalPages = totalPages;
+
                 return View(stocks);
             }
             if (pageNumber < 1 || pageNumber > totalPages) // 페이자가 범위를 벗어나면 첫번째 페이지로 Redirect
             {
                 return RedirectToAction("Index", new { pageNumber = 1 });
             }
-            ViewBag.CurrentPage = pageNumber;
-            ViewBag.TotalPages = totalPages;
             return View(stocks);
         }
 
         [HttpGet("KOSPI/search")]
-        public IActionResult Search(string query)
+        public IActionResult Search(string query, int pageNumber = 1)
         {
             var stocks = _stockService.SearchKOSPI(query);
-            ViewBag.Query = query;
-            return View(stocks);
+            int totalPages = _stockService.GetCountByDTO(ref stocks, _PageSize);
+            var filteredstocks = stocks.Skip(pageNumber - 1).Take(+_PageSize).ToList();
+            ViewBag.CurrentPage = pageNumber;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.query = query;
+            if (pageNumber == 1) // 무한루프로 빠지는 것을 막기 위한 로직
+            {
+
+                return View(filteredstocks);
+            }
+            if (pageNumber < 1 || pageNumber > totalPages) // 페이자가 범위를 벗어나면 첫번째 페이지로 Redirect
+            {
+                return RedirectToAction("/search", new { query = query, pageNumber = 1 });
+            }
+            return View(filteredstocks);
         }
 
 

@@ -1,35 +1,29 @@
-﻿@model List<BusinessLayer.DTO.GetAdvancedStockDTO>
-
+﻿@model List<BusinessLayer.DTO.GetIndexDTO>
 @{
-    ViewData["Title"] = "KOSPI";
+    ViewData["Title"] = "Search";
     Layout = "~/Views/Shared/_Layout.cshtml";
     int currentPage = ViewBag.CurrentPage;
     int totalPages = ViewBag.TotalPages;
+    string query = ViewBag.query;
 }
 
-<h1 class="text-center my-4">KOSPI</h1>
-
-
-
-
+<h1 class="text-center my-4">검색어 : "@ViewBag.Query"</h1>
 <div class="container">
-    <form class="d-flex justify-content-center mb-4" action="@Url.Action("Search", "KOSPI")" method="get">
+    <form class="d-flex justify-content-center mb-4" action="@Url.Action("Search", "INDEX")" method="get">
         <div class="col-md-6 d-flex">
             <input class="form-control me-2" type="search" name="query" placeholder="Search" aria-label="Search">
             <input type="hidden" name="pagenumber" value="1">
             <button class="btn btn-outline-success" type="submit">Search</button>
         </div>
     </form>
-
     <table class="table table-hover">
         <thead class="table-light">
             <tr>
                 <th>티커</th>
                 <th>종목명</th>
                 <th>종가</th>
-                <th>시가총액</th>
                 <th>거래량</th>
-                <th>상장주식수</th>
+                <th>시가총액</th>
                 <th>업데이트날짜</th>
             </tr>
         </thead>
@@ -37,25 +31,23 @@
             @for (int i = 0; i < Model.Count; i++)
             {
                 <tr class="@(i % 2 == 0 ? "table-primary" : "bg-white")">
-                    <td><a href="@Url.Action("ohlcv", "KOSPI", new { ticker = Model[i].ticker, axisy = "closing_price" })">@Model[i].ticker</a></td>
+                    <td><a href="@Url.Action("OHLCV", "INDEX", new { ticker = Model[i].ticker, axisy = "closing_price" })">@Model[i].ticker</a></td>
                     <td>@Model[i].name</td>
-                    <td>\@Model[i].closing_price.ToString("N0")</td>
-                    <td>\@Model[i].market_value.ToString("N0")</td>
+                    <td>\@Model[i].closing_price.ToString("N2")</td>
                     <td>@Model[i].trading_volume.ToString("N0")</td>
-                    <td>@Model[i].listed_stocks.ToString("N0")</td>
+                    <td>\@Model[i].market_value.ToString("N0")</td>
                     <td>@Model[i].trade_date</td>
                 </tr>
             }
         </tbody>
     </table>
-
     <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-center">
             <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                <a class="page-link" href="@Url.Action("Index", "KOSPI", new { pageNumber = currentPage - 1 })">Previous</a>
+                <a class="page-link" href="@Url.Action("Index", "INDEX", new { pageNumber = currentPage - 1, query = query })">Previous</a>
             </li>
             <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                <a class="page-link" href="@Url.Action("Index", "KOSPI", new { pageNumber = currentPage + 1 })">Next</a>
+                <a class="page-link" href="@Url.Action("Index", "INDEX", new { pageNumber = currentPage + 1, query })">Next</a>
             </li>
         </ul>
     </nav>

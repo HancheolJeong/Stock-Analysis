@@ -7,12 +7,17 @@ namespace Stock_Analysis.Controllers
     public class PortfolioController : Controller
     {
         private IPortfolioService _portfolioService;
-        public PortfolioController(IPortfolioService service)
+        private IStockService _stockService;
+        private IETFService _etfService;
+        public PortfolioController(IPortfolioService portfolioService, IStockService stockService, IETFService etfService)
         {
-            _portfolioService = service;
+            _portfolioService = portfolioService;
+            _stockService = stockService;
+            _etfService = etfService;
         }
         public IActionResult Index()
         {
+
             return View();
         }
 

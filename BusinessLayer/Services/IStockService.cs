@@ -28,5 +28,6 @@ namespace BusinessLayer.Services
         public Task<List<GetStockSectorTRXDTO>> GetStockSectorTRX(string ticker);
 
         public string GetNameByTicker(string market, string ticker);
+        public int GetCountByDTO(ref List<GetAdvancedStockDTO> stocks, int pageSize);
     }
 }

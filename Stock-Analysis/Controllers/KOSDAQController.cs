@@ -38,21 +38,29 @@ namespace Stock_Analysis.Controllers
         }
 
         [HttpGet("KOSDAQ/search")]
-        public IActionResult Search(string query)
+        public IActionResult Search(string query, int pageNumber = 1)
         {
+
             var stocks = _stockService.SearchKOSDAQ(query);
-            ViewBag.Query = query;
-            return View(stocks);
+            int totalPages = _stockService.GetCountByDTO(ref stocks, _PageSize);
+            var filteredstocks = stocks.Skip(pageNumber - 1).Take(+_PageSize).ToList();
+            ViewBag.CurrentPage = pageNumber;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.query = query;
+            if (pageNumber == 1) // 무한루프로 빠지는 것을 막기 위한 로직
+            {
+                return View(filteredstocks);
+            }
+            if (pageNumber < 1 || pageNumber > totalPages) // 페이자가 범위를 벗어나면 첫번째 페이지로 Redirect
+            {
+                return RedirectToAction("/search", new { query = query, pageNumber = 1 });
+            }
+            return View(filteredstocks);
         }
 
         [HttpGet("KOSDAQ/Detail")]
         public IActionResult Detail(string ticker)
         {
-            // 여기서 ticker에 해당하는 종목의 상세 정보를 가져오는 로직을 추가하시면 됩니다.
-            //var stockDetail = _stockService.GetStockDetail(ticker); // 예시로 _stockService에서 GetStockDetail 메서드를 호출하였습니다.
-
-            // 가져온 상세 정보를 view에 전달합니다.
-            //return View(stockDetail);
             return View();
         }
 
