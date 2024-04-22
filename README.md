@@ -24,7 +24,7 @@ HTML, CSS, JavaScript
 
 ### Back
 
-ASP.NET Core SQL Server 16
+ASP.NET Core, SQL Server 16
 
 <br />
 <br />
