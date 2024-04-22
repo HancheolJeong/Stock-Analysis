@@ -2,12 +2,6 @@
 using BusinessLayer.DTO;
 using DataAccessLayer.Mappers;
 using DataAccessLayer.Models;
-using Microsoft.Extensions.Caching.Memory;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLayer.Services
 {
@@ -36,5 +30,75 @@ namespace BusinessLayer.Services
             }
         }
 
-    }
+        /// <summary>
+        /// Portfolio를 요청하고 GetPortfolioDTO으로 매핑하고 리턴하는 함수
+        /// </summary>
+        /// <param name="email">사용자 이메일</param>
+        /// <returns>List<GetPortfolioDTO></returns>
+        public async Task<List<GetPortfolioDTO>> GetPortfolio(string email)
+        {
+            try
+            {
+                var configuration = new MapperConfiguration(cfg =>
+                {
+                    cfg.CreateMap<Portfolio, GetPortfolioDTO>()
+                       .ForMember(dest => dest.TotalValue, opt => opt.MapFrom(src => src.amount * src.unit_price));
+                });
+
+                Mapper mapper = new Mapper(configuration);
+
+                List<Portfolio> list = await _portfolioMapper.GetPortfolio(email);
+                List<GetPortfolioDTO> dtoList = mapper.Map<List<Portfolio>, List<GetPortfolioDTO>>(list);
+                return dtoList;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+
+
+        public int GetTotalPurchaseCost(ref List<GetPortfolioDTO> portfolios)
+        {
+            int totalPurchaseCost = portfolios.Sum(p => p.amount * p.unit_price);
+            return totalPurchaseCost;
+        }
+
+        public int GetTotalValuationProfitLoss(ref List<GetPortfolioDTO> portfolios)
+        {
+            int totalProfitLoss = portfolios.Sum(p => ((int)p.current_price - p.unit_price) * p.amount);
+            return totalProfitLoss;
+            return 0;
+        }
+
+        public int GetTotalValuation(ref List<GetPortfolioDTO> portfolios)
+        {
+            int totalValuation = portfolios.Sum(p => (int)p.current_price * p.amount);
+            return totalValuation;
+            return 0;
+        }
+
+        public double GetTotalReturnPercentage(ref List<GetPortfolioDTO> portfolios)
+        {
+            double totalPurchaseCost = GetTotalPurchaseCost(ref portfolios);
+            double totalValuation = GetTotalValuation(ref portfolios);
+            if (totalPurchaseCost == 0) return 0; // Avoid division by zero
+            double totalReturnPercentage = (totalValuation - totalPurchaseCost) / totalPurchaseCost * 100;
+            return totalReturnPercentage;
+        }
+
+		public async Task<bool> DeletePortfolio(int id)
+		{
+			try
+			{
+				return await _portfolioMapper.DeletePortfolio(id);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error deleting portfolio with ID {id}: {ex.Message}");
+				return false;
+			}
+		}
+
+	}
 }

@@ -76,6 +76,20 @@ namespace BusinessLayer.Services
             return "Not found";
         }
 
+        public int GetPriceByTicker(string ticker)
+        {
+            if (_memoryCache.TryGetValue("ETF", out List<GetETFDTO> stocks))
+            {
+                // LINQ를 사용하여 ticker와 일치하는 첫 번째 주식을 찾고, 해당 주식의 이름을 반환
+                var stock = stocks.FirstOrDefault(s => s.ticker == ticker);
+                if (stock != null)
+                {
+                    return stock.closing_price;
+                }
+            }
+            return 0;
+        }
+
         public int GetCountByDTO(ref List<GetETFDTO> stocks, int pageSize)
         {
             if (stocks != null && stocks.Count > 0)

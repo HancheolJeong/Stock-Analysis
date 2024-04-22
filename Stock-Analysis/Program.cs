@@ -29,8 +29,6 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddTransient<ILoginService, LoginServiceImpl>();
 builder.Services.AddTransient<IStockService, StockService>();
 builder.Services.AddTransient<IIndexService, IndexService>();
-builder.Services.AddTransient<IPortfolioService, PortfolioService>();
-//builder.Services.AddTransient<IProcCall, ProcCall>();
 builder.Services.AddTransient<IETFService, ETFService>();
 builder.Services.AddTransient<ILoginMapper, LoginMapper>(provider => new LoginMapper(connStr));
 builder.Services.AddTransient<IStockMapper, StockMapper>(provider => new StockMapper(connStr));
@@ -38,8 +36,6 @@ builder.Services.AddTransient<IIndexMapper, IndexMapper>(provider => new IndexMa
 builder.Services.AddTransient<IPortfolioMapper, PortfolioMapper>(provider => new PortfolioMapper(connStr));
 builder.Services.AddTransient<IProcCall, ProcCall>(provider => new ProcCall(connStr));
 builder.Services.AddTransient<IETFMapper, ETFMapper>(provider => new ETFMapper(connStr));
-//builder.Services.AddTransient<ProcCall>(provider => new ProcCall());
-//builder.Services.AddTransient<ProcCall>(provider => new ProcCall(connStr));
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -54,11 +50,6 @@ var etfService = app.Services.GetRequiredService<ETFService>();
 await stockService.LoadDataAsync();
 await indexService.LoadDataAsync();
 await etfService.LoadDataAsync();
-//await Task.WhenAll(
-//    stockService.LoadDataAsync(),
-//    indexService.LoadDataAsync(),
-//    etfService.LoadDataAsync()
-//);
 
 app.UseSession();
 app.UseStaticFiles();
@@ -67,7 +58,6 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-//app.UseMiddleware<AuthenticationMiddleware>();
 
 app.MapControllerRoute(
     name: "default",

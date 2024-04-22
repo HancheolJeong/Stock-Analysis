@@ -23,8 +23,4 @@
     <None Include="wwwroot\resources\images\stock.png" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Views\Portfolio\" />
-  </ItemGroup>
-
 </Project>

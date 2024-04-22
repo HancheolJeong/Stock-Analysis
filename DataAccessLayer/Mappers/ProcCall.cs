@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataAccessLayer.Models;
 
 namespace DataAccessLayer.Mappers
 {
@@ -90,6 +91,47 @@ namespace DataAccessLayer.Mappers
             var sqlParamter = new SqlParameter(parameterName: String.Empty, value: templateValue);
 
             return sqlParamter.DbType;
+        }
+
+        public async Task<List<Portfolio>> GetPortfolio(string email)
+        {
+            List<Portfolio> list = new List<Portfolio>();
+            try
+            {
+                using (SqlConnection sqlConnection = new SqlConnection(connectionString))
+                {
+                    await sqlConnection.OpenAsync();
+                    string query = @"SELECT * FROM stock.portfolio WHERE email = @email ORDER BY trade_date ASC";
+
+                    using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
+                    {
+                        sqlCommand.Parameters.AddWithValue("@email", email);
+                        using (SqlDataReader reader = await sqlCommand.ExecuteReaderAsync())
+                        {
+                            while (reader.Read())
+                            {
+                                Portfolio portfolio = new Portfolio
+                                {
+                                    id = reader.GetInt32(reader.GetOrdinal("id")),
+                                    ticker = reader.GetString(reader.GetOrdinal("ticker")),
+                                    market = reader.GetString(reader.GetOrdinal("market")),
+                                    amount = reader.GetInt32(reader.GetOrdinal("amount")),
+                                    unit_price = reader.GetInt32(reader.GetOrdinal("unit_price")),
+                                    create_dt = DateOnly.FromDateTime((DateTime)reader["create_dt"]),
+                                    email = reader.GetString(reader.GetOrdinal("email"))
+                                };
+                                list.Add(portfolio);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Ideally, log this exception
+                throw new Exception("An error occurred while retrieving stocks.", ex);
+            }
+            return list;
         }
 
     }

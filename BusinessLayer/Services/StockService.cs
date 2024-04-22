@@ -60,7 +60,6 @@ namespace BusinessLayer.Services
         {
             if (_memoryCache.TryGetValue(market, out List<GetAdvancedStockDTO> stocks))
             {
-                // LINQ를 사용하여 ticker와 일치하는 첫 번째 주식을 찾고, 해당 주식의 이름을 반환
                 var stock = stocks.FirstOrDefault(s => s.ticker == ticker);
                 if (stock != null)
                 {
@@ -69,6 +68,21 @@ namespace BusinessLayer.Services
             }
             return "Not found";
         }
+
+        public int GetPriceByTicker(string market, string ticker)
+        {
+            if (_memoryCache.TryGetValue(market, out List<GetAdvancedStockDTO> stocks))
+            {
+                var stock = stocks.FirstOrDefault(s => s.ticker == ticker);
+                if (stock != null)
+                {
+                    return stock.closing_price;
+                }
+            }
+            return 0;
+        }
+
+
 
         public List<GetAdvancedStockDTO> GetKOSPI(int pageNumber, int pageSize)
         {

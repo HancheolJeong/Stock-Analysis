@@ -1,0 +1,120 @@
+﻿@model IEnumerable<BusinessLayer.DTO.GetPortfolioDTO>
+
+@{
+	ViewData["Title"] = "Index";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+	int totalPurchaseCost = ViewBag.totalPurchaseCost;
+	int totalValuationProfitLoss = ViewBag.totalValuationProfitLoss;
+	int totalValuation = ViewBag.totalValuation;
+	double totalReturnPercentage = ViewBag.totalReturnPercentage;
+
+}
+<div class="container mt-5">
+	<div class="row justify-content-center mb-3">
+		<h2 class="text-center">포트폴리오</h2>
+	</div>
+	<div class="row">
+		<div class="col-md-3">
+			<p><strong>총매수금액 : \ </strong> @totalPurchaseCost.ToString("N0")</p>
+		</div>
+		<div class="col-md-3">
+			<p><strong>총평가손익 : \</strong> @totalValuationProfitLoss.ToString("N0")</p>
+		</div>
+		<div class="col-md-3">
+			<p><strong>총평가금액 : \</strong> @totalValuation.ToString("N0")</p>
+		</div>
+		<div class="col-md-3">
+			<p><strong>총평가손익률 : </strong> @totalReturnPercentage.ToString("N2")%</p>
+		</div>
+	</div>
+</div>
+
+<div class="container mt-5">
+	<h4 class="mb-3">종목별 매수 정보</h4>
+	<div class="scrollable-table">
+		<table class="table table-hover">
+			<thead class="table-light">
+				<tr>
+					<th>티커</th>
+					<th>종목명</th>
+					<th>수량</th>
+					<th>평균 매수단가</th>
+					<th>현재가</th>
+					<th>합계</th>
+					<th>평가금액</th>
+					<th>평가손익</th>
+					<th>손익률</th>
+					<th>시장</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var group in Model.GroupBy(stock => stock.ticker).Select(g => new
+				{
+					Ticker = g.Key,
+					Name = g.First().name,
+					Market = g.First().market,
+					TotalAmount = g.Sum(stock => stock.amount),
+					AverageUnitPrice = g.Sum(stock => stock.unit_price * stock.amount) / (double)g.Sum(stock => stock.amount),
+					CurrentPrice = g.First().current_price,
+					TotalValue = g.Sum(stock => stock.TotalValue),
+					Valuation = g.Sum(stock => stock.amount * stock.current_price),
+					ProfitLoss = g.Sum(stock => (stock.current_price - stock.unit_price) * stock.amount),
+					TotalPurchaseCost = g.Sum(stock => stock.unit_price * stock.amount),
+					ProfitLossPercentage = g.Sum(stock => stock.unit_price * stock.amount) != 0
+									? (g.Sum(stock => (stock.current_price - stock.unit_price) * stock.amount) / (double)g.Sum(stock => stock.unit_price * stock.amount)) * 100
+									: 0
+				}))
+				{
+					<tr>
+						<td>@group.Ticker</td>
+						<td>@group.Name</td>
+						<td>@group.TotalAmount.ToString("N0")</td>
+						<td>\@group.AverageUnitPrice.ToString("N0")</td>
+						<td>\@Convert.ToInt32(group.CurrentPrice).ToString("N0")</td>
+						<td>\@Convert.ToInt32(group.TotalValue).ToString("N0")</td>
+						<td>\@Convert.ToInt32(group.Valuation).ToString("N0")</td>
+						<td>\@Convert.ToInt32(group.ProfitLoss).ToString("N0")</td>
+						<td>@Convert.ToDouble(group.ProfitLossPercentage).ToString("N2")%</td>
+						<td>@group.Market</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+
+<div class="container mt-5">
+	<h4 class="mb-3">매수 기록</h4>
+	<div class="scrollable-table">
+		<table class="table table-hover">
+			<thead class="table-light">
+				<tr>
+					<th>티커</th>
+					<th>종목명</th>
+					<th>수량</th>
+					<th>매수단가</th>
+					<th>현재가</th>
+					<th>합계</th>
+					<th>시장</th>
+					<th>삭제</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var stock in Model)
+				{
+					<tr>
+						<td>@stock.ticker.ToString()</td>
+						<td>@stock.name.ToString()</td>
+						<td>@stock.amount.ToString("N0")</td>
+						<td>\@stock.unit_price.ToString("N0")</td>
+						<td>\@Convert.ToInt32(stock.current_price).ToString("N0")</td>
+						<td>\@stock.TotalValue.ToString("N0")</td>
+						<td>@stock.market.ToString()</td>
+						<td><button class="btn btn-danger delete-btn" data-id="@stock.id">삭제</button></td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>

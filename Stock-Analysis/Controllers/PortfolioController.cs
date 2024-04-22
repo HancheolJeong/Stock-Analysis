@@ -15,10 +15,48 @@ namespace Stock_Analysis.Controllers
             _stockService = stockService;
             _etfService = etfService;
         }
-        public IActionResult Index()
-        {
 
-            return View();
+        public async Task<IActionResult> Index()
+        {
+            GetUserDTO? userDto = HttpContext.Session.Get<GetUserDTO>("LoginUser");
+            
+            if (userDto == null)
+            {
+                return RedirectToAction("/"); 
+            }
+
+
+            string email = userDto.email;
+            var stocks = await _portfolioService.GetPortfolio(email);
+
+            foreach (var stock in stocks)
+            {
+                if (stock.market == "KOSPI")
+                {
+                    stock.name = _stockService.GetNameByTicker("KOSPI",stock.ticker);
+                    stock.current_price = _stockService.GetPriceByTicker("KOSPI", stock.ticker);
+                }
+                else if (stock.market == "KOSDAQ")
+                {
+                    stock.name = _stockService.GetNameByTicker("KOSDAQ", stock.ticker);
+                    stock.current_price = _stockService.GetPriceByTicker("KOSDAQ", stock.ticker);
+                }
+                else if (stock.market == "ETF")
+                {
+                    stock.name = _etfService.GetNameByTicker(stock.ticker);
+                    stock.current_price = _etfService.GetPriceByTicker(stock.ticker);
+                }
+            }
+
+            int totalPurchaseCost = _portfolioService.GetTotalPurchaseCost(ref stocks);
+            int totalValuationProfitLoss = _portfolioService.GetTotalValuationProfitLoss(ref stocks);
+            int totalValuation = _portfolioService.GetTotalValuation(ref stocks);
+            double totalReturnPercentage = _portfolioService.GetTotalReturnPercentage(ref stocks);
+            ViewBag.totalPurchaseCost  = totalPurchaseCost;
+            ViewBag.totalValuationProfitLoss = totalValuationProfitLoss;
+            ViewBag.totalValuation = totalValuation;
+            ViewBag.totalReturnPercentage = totalReturnPercentage;
+            return View(stocks);
         }
 
         [HttpPost]
@@ -49,5 +87,28 @@ namespace Stock_Analysis.Controllers
                 return Json(new { success = false });
             }
         }
-    }
+
+		[HttpDelete]
+		public async Task<IActionResult> Delete(int id)
+		{
+			GetUserDTO? userDto = HttpContext.Session.Get<GetUserDTO>("LoginUser");
+			if (userDto == null)
+			{
+				return Json(new { success = false, message = "User is not authenticated." });
+			}
+
+			bool success = await _portfolioService.DeletePortfolio(id);
+			if (success)
+			{
+				return Json(new { success = true, message = "삭제 완료했습니다." });
+			}
+			else
+			{
+				return Json(new { success = false, message = "삭제 실패했습니다." });
+			}
+		}
+
+
+
+	}
 }
