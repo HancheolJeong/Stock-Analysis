@@ -15,6 +15,12 @@ namespace BusinessLayer.Services
     {
         IIndexMapper indexMapper;
         IMemoryCache _memoryCache;
+
+        /// <summary>
+        /// Index
+        /// </summary>
+        /// <param name="memoryCache"></param>
+        /// <param name="mapper"></param>
         public IndexService(IMemoryCache memoryCache, IIndexMapper mapper)
         {
             indexMapper = mapper;

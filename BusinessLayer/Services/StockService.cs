@@ -16,6 +16,12 @@ namespace BusinessLayer.Services
     {
         IStockMapper stockMapper; // Stock테이블 데이터베이스 매핑 인터페이스 선언
         IMemoryCache _memoryCache; 
+
+        /// <summary>
+        /// Stock 테이블과 관련된 비즈니스 로직 인스턴스를 초기화 합니다.
+        /// </summary>
+        /// <param name="memoryCache">매모리 캐시 객체</param>
+        /// <param name="mapper">결과를 엔티티로 반환하는 객체</param> 
         public StockService(IMemoryCache memoryCache, IStockMapper mapper)
         {
             stockMapper = mapper;
@@ -34,7 +40,7 @@ namespace BusinessLayer.Services
             var configuration = new MapperConfiguration(cfg => cfg.CreateMap<Stock, GetStockDTO>());
             Mapper mapper = new Mapper(configuration);
 
-            List<Stock> list = await stockMapper.GetAdvancedStockData();
+            List<Stock> list = await stockMapper.GetStockData();
             List<GetStockDTO> dtoList = mapper.Map<List<Stock>, List<GetStockDTO>>(list);
             var kospiStocks = dtoList.Where(s => s.market == "KOSPI").ToList();
             var kosdaqStocks = dtoList.Where(s => s.market == "KOSDAQ").ToList();

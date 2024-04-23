@@ -56,11 +56,5 @@ namespace Stock_Analysis.Controllers
         }
 
 
-        public IActionResult AuthenticateSession()
-        {
-            return View();
-        }
-
-
     }
 }

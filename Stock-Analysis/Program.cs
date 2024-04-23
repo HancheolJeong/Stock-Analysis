@@ -34,7 +34,6 @@ builder.Services.AddTransient<IStockService, StockService>();
 builder.Services.AddTransient<IIndexService, IndexService>();
 builder.Services.AddTransient<IETFService, ETFService>();
 builder.Services.AddTransient<IPortfolioService, PortfolioService>();
-builder.Services.AddTransient<ILoginMapper, LoginMapper>(provider => new LoginMapper(connStr));
 builder.Services.AddTransient<IStockMapper, StockMapper>(provider => new StockMapper(connStr));
 builder.Services.AddTransient<IIndexMapper, IndexMapper>(provider => new IndexMapper(connStr));
 builder.Services.AddTransient<IPortfolioMapper, PortfolioMapper>(provider => new PortfolioMapper(connStr));

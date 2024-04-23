@@ -16,7 +16,7 @@ namespace DataAccessLayer.Mappers
             connectionString = conn;
         }
 
-        public async Task<List<Stock>> GetAdvancedStockData()
+        public async Task<List<Stock>> GetStockData()
         {
             List<Stock> list = new List<Stock>();
             try

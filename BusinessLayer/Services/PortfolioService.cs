@@ -8,6 +8,11 @@ namespace BusinessLayer.Services
     public class PortfolioService : IPortfolioService
     {
         IPortfolioMapper _portfolioMapper;
+
+        /// <summary>
+        /// Portfolio 테이블과 관련된 비즈니스 로직 인스턴스를 초기화
+        /// </summary>
+        /// <param name="mapper">결과를 엔티티로 반환하는 객체를 주입</param>
         public PortfolioService(IPortfolioMapper mapper)
         {
             _portfolioMapper = mapper;
