@@ -20,7 +20,7 @@ namespace Stock_Analysis.Controllers
         [HttpGet("KOSDAQ/{pageNumber:int}")]
         public IActionResult Index(int pageNumber = 1)
         {
-            var stocks = _stockService.GetKOSDAQ(pageNumber, _PageSize);
+            var stocks = _stockService.GetStock(_market, pageNumber, _PageSize);
             int totalPages = _stockService.GetKOSDAQCount(_PageSize);
             if (pageNumber == 1) // 무한루프로 빠지는 것을 막기 위한 로직
             {
@@ -41,7 +41,7 @@ namespace Stock_Analysis.Controllers
         public IActionResult Search(string query, int pageNumber = 1)
         {
 
-            var stocks = _stockService.SearchKOSDAQ(query);
+            var stocks = _stockService.SearchStock(_market, query);
             int totalPages = _stockService.GetCountByDTO(ref stocks, _PageSize);
             var filteredstocks = stocks.Skip(pageNumber - 1).Take(+_PageSize).ToList();
             ViewBag.CurrentPage = pageNumber;

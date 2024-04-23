@@ -24,28 +24,28 @@ namespace BusinessLayer.Services
         public async Task LoadDataAsync()
         {
 
-            var configuration = new MapperConfiguration(cfg => cfg.CreateMap<AdvancedStock, GetAdvancedStockDTO>());
+            var configuration = new MapperConfiguration(cfg => cfg.CreateMap<Stock, GetStockDTO>());
 
-            List<AdvancedStock> list = await stockMapper.GetAdvancedStockData();
+            List<Stock> list = await stockMapper.GetAdvancedStockData();
             _memoryCache.Set("stocks", list, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromHours(1)));
         }
 
-        public List<AdvancedStock> GetStocks(int pageNumber, int pageSize)
+        public List<Stock> GetStocks(int pageNumber, int pageSize)
         {
-            if (_memoryCache.TryGetValue("stocks", out List<AdvancedStock> stocks))
+            if (_memoryCache.TryGetValue("stocks", out List<Stock> stocks))
             {
                 return stocks.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             }
-            return new List<AdvancedStock>();
+            return new List<Stock>();
         }
 
-        public List<AdvancedStock> SearchStocks(string query)
+        public List<Stock> SearchStocks(string query)
         {
-            if (_memoryCache.TryGetValue("stocks", out List<AdvancedStock> stocks))
+            if (_memoryCache.TryGetValue("stocks", out List<Stock> stocks))
             {
                 return stocks.Where(s => s.name.Contains(query) || s.ticker.Contains(query)).ToList();
             }
-            return new List<AdvancedStock>();
+            return new List<Stock>();
         }
     }
 

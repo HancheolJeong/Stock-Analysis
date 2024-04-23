@@ -17,14 +17,6 @@ namespace Stock_Analysis.Controllers
             loginService = service;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-        public IActionResult NewUser()
-        {
-            return View();
-        }
 
         public async Task<IActionResult> Login(string returnUrl = "/")
         {
@@ -64,29 +56,11 @@ namespace Stock_Analysis.Controllers
         }
 
 
-        public IActionResult SearchUserId()
-        {
-            return View();
-        }
-
         public IActionResult AuthenticateSession()
         {
             return View();
         }
 
 
-        public IActionResult Auth()
-        {
-            GetUserDTO? userDto = HttpContext.Session.Get<GetUserDTO>("LoginUser");
-
-            if (userDto != null)
-            {
-                return View(userDto); 
-            }
-            else
-            {
-                return RedirectToAction("Login", "Account");
-            }
-        }
     }
 }

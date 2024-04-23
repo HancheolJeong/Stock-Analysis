@@ -17,7 +17,7 @@ namespace Stock_Analysis.Controllers
         [HttpGet("KOSPI/{pageNumber:int}")]
         public IActionResult Index(int pageNumber = 1)
         {
-            var stocks = _stockService.GetKOSPI(pageNumber, _PageSize);
+            var stocks = _stockService.GetStock(_market ,pageNumber, _PageSize);
             int totalPages = _stockService.GetKOSPICount(_PageSize);
             ViewBag.CurrentPage = pageNumber;
             ViewBag.TotalPages = totalPages;
@@ -36,7 +36,7 @@ namespace Stock_Analysis.Controllers
         [HttpGet("KOSPI/search")]
         public IActionResult Search(string query, int pageNumber = 1)
         {
-            var stocks = _stockService.SearchKOSPI(query);
+            var stocks = _stockService.SearchStock(_market, query);
             int totalPages = _stockService.GetCountByDTO(ref stocks, _PageSize);
             var filteredstocks = stocks.Skip(pageNumber - 1).Take(+_PageSize).ToList();
             ViewBag.CurrentPage = pageNumber;
@@ -49,7 +49,8 @@ namespace Stock_Analysis.Controllers
             }
             if (pageNumber < 1 || pageNumber > totalPages) // 페이자가 범위를 벗어나면 첫번째 페이지로 Redirect
             {
-                return RedirectToAction("/search", new { query = query, pageNumber = 1 });
+                //return RedirectToAction("/search", new { query = query, pageNumber = 1 });
+                return RedirectToAction("Index", "KOSPI", new { query = query, pageNumber = 1 });
             }
             return View(filteredstocks);
         }

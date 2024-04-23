@@ -14,41 +14,28 @@ namespace BusinessLayer.Services
 {
     public class StockService : IStockService
     {
-        IStockMapper stockMapper;
-        IMemoryCache _memoryCache;
+        IStockMapper stockMapper; // Stock테이블 데이터베이스 매핑 인터페이스 선언
+        IMemoryCache _memoryCache; 
         public StockService(IMemoryCache memoryCache, IStockMapper mapper)
         {
             stockMapper = mapper;
             _memoryCache = memoryCache;
         }
 
-        public async Task<List<GetStockDTO>> GetStockInfo()
-        {
-            try
-            {
-                var configuration = new MapperConfiguration(cfg => cfg.CreateMap<Stock, GetStockDTO>());
-                Mapper mapper = new Mapper(configuration);
-
-                List<Stock> list = await stockMapper.GetAll();
 
 
-                List<GetStockDTO> dtoList = mapper.Map<List<Stock>, List<GetStockDTO>>(list);
-                return dtoList;
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-
+        /// <summary>
+        /// 자주 접근하는 Stock 데이터를 캐시메모리에 적재합니다.
+        /// </summary>
+        /// <returns></returns>
         public async Task LoadDataAsync()
         {
 
-            var configuration = new MapperConfiguration(cfg => cfg.CreateMap<AdvancedStock, GetAdvancedStockDTO>());
+            var configuration = new MapperConfiguration(cfg => cfg.CreateMap<Stock, GetStockDTO>());
             Mapper mapper = new Mapper(configuration);
 
-            List<AdvancedStock> list = await stockMapper.GetAdvancedStockData();
-            List<GetAdvancedStockDTO> dtoList = mapper.Map<List<AdvancedStock>, List<GetAdvancedStockDTO>>(list);
+            List<Stock> list = await stockMapper.GetAdvancedStockData();
+            List<GetStockDTO> dtoList = mapper.Map<List<Stock>, List<GetStockDTO>>(list);
             var kospiStocks = dtoList.Where(s => s.market == "KOSPI").ToList();
             var kosdaqStocks = dtoList.Where(s => s.market == "KOSDAQ").ToList();
 
@@ -58,7 +45,7 @@ namespace BusinessLayer.Services
 
         public string GetNameByTicker(string market, string ticker)
         {
-            if (_memoryCache.TryGetValue(market, out List<GetAdvancedStockDTO> stocks))
+            if (_memoryCache.TryGetValue(market, out List<GetStockDTO> stocks))
             {
                 var stock = stocks.FirstOrDefault(s => s.ticker == ticker);
                 if (stock != null)
@@ -71,7 +58,7 @@ namespace BusinessLayer.Services
 
         public int GetPriceByTicker(string market, string ticker)
         {
-            if (_memoryCache.TryGetValue(market, out List<GetAdvancedStockDTO> stocks))
+            if (_memoryCache.TryGetValue(market, out List<GetStockDTO> stocks))
             {
                 var stock = stocks.FirstOrDefault(s => s.ticker == ticker);
                 if (stock != null)
@@ -84,16 +71,7 @@ namespace BusinessLayer.Services
 
 
 
-        public List<GetAdvancedStockDTO> GetKOSPI(int pageNumber, int pageSize)
-        {
-            if (_memoryCache.TryGetValue("KOSPI", out List<GetAdvancedStockDTO> stocks))
-            {
-                return stocks.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-            }
-            return new List<GetAdvancedStockDTO>();
-        }
-
-        public int GetCountByDTO(ref List<GetAdvancedStockDTO> stocks, int pageSize)
+        public int GetCountByDTO(ref List<GetStockDTO> stocks, int pageSize)
         {
             if (stocks != null && stocks.Count > 0)
             {
@@ -103,18 +81,20 @@ namespace BusinessLayer.Services
             return 1;
         }
 
-        public List<GetAdvancedStockDTO> GetKOSDAQ(int pageNumber, int pageSize)
+        public List<GetStockDTO> GetStock(string market ,int pageNumber, int pageSize)
         {
-            if (_memoryCache.TryGetValue("KOSDAQ", out List<GetAdvancedStockDTO> stocks))
+            if (_memoryCache.TryGetValue(market, out List<GetStockDTO> stocks))
             {
                 return stocks.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             }
-            return new List<GetAdvancedStockDTO>();
+            return new List<GetStockDTO>();
         }
+
+
 
         public int GetKOSPICount(int pageSize)
         {
-            if (_memoryCache.TryGetValue("KOSPI", out List<GetAdvancedStockDTO> stocks))
+            if (_memoryCache.TryGetValue("KOSPI", out List<GetStockDTO> stocks))
             {
                 int result = (int)Math.Ceiling(stocks.Count() / (double)pageSize);
                 return result;
@@ -124,33 +104,25 @@ namespace BusinessLayer.Services
 
         public int GetKOSDAQCount(int pageSize)
         {
-            if (_memoryCache.TryGetValue("KOSDAQ", out List<GetAdvancedStockDTO> stocks))
+            if (_memoryCache.TryGetValue("KOSDAQ", out List<GetStockDTO> stocks))
             {
                 return stocks.Count() / pageSize;
             }
             return 1;
         }
 
-        public List<GetAdvancedStockDTO> SearchKOSPI(string query)
+        public List<GetStockDTO> SearchStock(string market, string query)
         {
-            if (_memoryCache.TryGetValue("KOSPI", out List<GetAdvancedStockDTO> stocks))
+            if (_memoryCache.TryGetValue(market, out List<GetStockDTO> stocks))
             {
                 return stocks.Where(s => s.name.Contains(query) || s.ticker.Contains(query)).ToList();
             }
-            return new List<GetAdvancedStockDTO>();
+            return new List<GetStockDTO>();
         }
 
-        public List<GetAdvancedStockDTO> SearchKOSDAQ(string query)
+        public List<GetStockDTO> GetTopStocksByValue(string marketKey, string sortBy, int n)
         {
-            if (_memoryCache.TryGetValue("KOSDAQ", out List<GetAdvancedStockDTO> stocks))
-            {
-                return stocks.Where(s => s.name.Contains(query) || s.ticker.Contains(query)).ToList();
-            }
-            return new List<GetAdvancedStockDTO>();
-        }
-        public List<GetAdvancedStockDTO> GetTopStocksByValue(string marketKey, string sortBy, int n)
-        {
-            if (_memoryCache.TryGetValue(marketKey, out List<GetAdvancedStockDTO> stocks))
+            if (_memoryCache.TryGetValue(marketKey, out List<GetStockDTO> stocks))
             {
                 switch (sortBy)
                 {
@@ -162,7 +134,7 @@ namespace BusinessLayer.Services
                         throw new ArgumentException("Invalid sort parameter. Use 'market_value' or 'transaction_amount'.");
                 }
             }
-            return new List<GetAdvancedStockDTO>();
+            return new List<GetStockDTO>();
         }
 
 

@@ -9,13 +9,8 @@ namespace DataAccessLayer.Mappers
 {
     public interface IStockMapper
     {
-        Task<Stock> Create(Stock stock);
 
-        public Task<List<Stock>> GetAll();
-
-        public Task<List<Stock>> GetData(int pageNumber, int pageSize);
-
-        public Task<List<AdvancedStock>> GetAdvancedStockData();
+        public Task<List<Stock>> GetAdvancedStockData();
         public Task<List<StockOHLCV>> GetStockOHLCV(string ticker);
         public Task<List<StockMarketCap>> GetStockMarketCap(string ticker);
         public Task<List<StockFundamental>> GetStockFundamental(string ticker);

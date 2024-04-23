@@ -26,10 +26,14 @@ builder.Services.AddSingleton<StockService>();
 builder.Services.AddSingleton<IndexService>();
 builder.Services.AddSingleton<ETFService>();
 builder.Services.AddControllersWithViews();
+
+
+// 의존성 주입
 builder.Services.AddTransient<ILoginService, LoginServiceImpl>();
 builder.Services.AddTransient<IStockService, StockService>();
 builder.Services.AddTransient<IIndexService, IndexService>();
 builder.Services.AddTransient<IETFService, ETFService>();
+builder.Services.AddTransient<IPortfolioService, PortfolioService>();
 builder.Services.AddTransient<ILoginMapper, LoginMapper>(provider => new LoginMapper(connStr));
 builder.Services.AddTransient<IStockMapper, StockMapper>(provider => new StockMapper(connStr));
 builder.Services.AddTransient<IIndexMapper, IndexMapper>(provider => new IndexMapper(connStr));
