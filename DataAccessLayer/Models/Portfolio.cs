@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DataAccessLayer.Models
+﻿namespace DataAccessLayer.Models
 {
-    public class Portfolio
+	public class Portfolio
     {
         public int? id {  get; set; } // id
         public string ticker { get; set; } // 티커 

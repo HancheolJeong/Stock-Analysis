@@ -18,6 +18,12 @@ namespace Stock_Analysis.Controllers
         }
 
 
+        /// <summary>
+        /// GET /login/login
+        /// 구글 로그인 서비스를 연결하는 요청
+        /// </summary>
+        /// <param name="returnUrl"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Login(string returnUrl = "/")
         {
             var authenticationProperties = new AuthenticationProperties
@@ -27,18 +33,27 @@ namespace Stock_Analysis.Controllers
             return Challenge(authenticationProperties, GoogleDefaults.AuthenticationScheme);
         }
 
+        /// <summary>
+        /// GET/ login/logout
+        /// 로그아웃 세션 삭제 요청
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> Logout()
         {
             HttpContext.Session.Remove("LoginUser");
             return Redirect("/");
         }
 
+        /// <summary>
+        /// 세션을 생성
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> GoogleResponse()
         {
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             if (!result.Succeeded)
             {
-                return Redirect("/login");
+                return Redirect("/");
             }
 
             GetUserDTO dto = new GetUserDTO();

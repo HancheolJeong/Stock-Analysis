@@ -1,14 +1,9 @@
 ﻿using DataAccessLayer.Models;
-using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccessLayer.Mappers
 {
-    public class StockMapper : IStockMapper
+	public class StockMapper : IStockMapper
     {
         private string connectionString;
 
@@ -16,6 +11,11 @@ namespace DataAccessLayer.Mappers
             connectionString = conn;
         }
 
+        /// <summary>
+        /// Stock테이블 데이터를 요청하고 해당 데이터를 리스트에 적재하고 반환하는 함수
+        /// </summary>
+        /// <returns>Stock 리스트</returns>
+        /// <exception cref="Exception"></exception>
         public async Task<List<Stock>> GetStockData()
         {
             List<Stock> list = new List<Stock>();
@@ -107,7 +107,13 @@ JOIN
             return list;
         }
 
-        public async Task<List<StockOHLCV>> GetStockOHLCV(string ticker)
+		/// <summary>
+		/// Stock OHLCV 테이블 데이터를 티커를 기준으로 요청하고 해당 데이터를 리스트에 적재하고 반환하는 함수
+		/// </summary>
+		/// <param name="ticker">티커</param>
+		/// <returns>Stock OHLCV 리스트</returns>
+		/// <exception cref="Exception"></exception>
+		public async Task<List<StockOHLCV>> GetStockOHLCV(string ticker)
         {
             List<StockOHLCV> list = new List<StockOHLCV>();
             try
@@ -148,6 +154,12 @@ JOIN
             return list;
         }
 
+        /// <summary>
+        /// Stock MarketCap 테이블 데이터를 티커 기준으로 요청하고 해당 데이터를 리스트에 적재하고 반환하는 함수
+        /// </summary>
+        /// <param name="ticker">티커</param>
+        /// <returns>Stock MarketCap 리스트</returns>
+        /// <exception cref="Exception"></exception>
         public async Task<List<StockMarketCap>> GetStockMarketCap(string ticker)
         {
             List<StockMarketCap> list = new List<StockMarketCap>();
@@ -188,6 +200,12 @@ JOIN
             return list;
         }
 
+        /// <summary>
+        /// Stock Fundamental 테이블 데이터를 티커를 기준으로 요청하고 해당 데이터를 리스트에 적재하고 반환하는 함수
+        /// </summary>
+        /// <param name="ticker">티커</param>
+        /// <returns>Stock Fundamental 리스트</returns>
+        /// <exception cref="Exception"></exception>
         public async Task<List<StockFundamental>> GetStockFundamental(string ticker)
         {
             List<StockFundamental> list = new List<StockFundamental>();
@@ -230,6 +248,12 @@ JOIN
             return list;
         }
 
+        /// <summary>
+        /// Stock MarketTRX 테이블 데이터릴 티커로 기준으로 요청하고 해당 데이터를 리스틍에 적재하고 반환하는 함수
+        /// </summary>
+        /// <param name="ticker">티커</param>
+        /// <returns>Stock MarketTRX 리스트</returns>
+        /// <exception cref="Exception"></exception>
         public async Task<List<StockMarketTRX>> GetStockMarketTRX(string ticker)
         {
             List<StockMarketTRX> list = new List<StockMarketTRX>();
@@ -270,7 +294,13 @@ JOIN
             return list;
         }
 
-        public async Task<List<StockSectorTRX>> GetStockSectorTRX(string ticker)
+		/// <summary>
+		/// Stock SectorTRX 테이블 데이터릴 티커로 기준으로 요청하고 해당 데이터를 리스틍에 적재하고 반환하는 함수
+		/// </summary>
+		/// <param name="ticker">티커</param>
+		/// <returns>Stock SectorTRX 리스트</returns>
+		/// <exception cref="Exception"></exception>
+		public async Task<List<StockSectorTRX>> GetStockSectorTRX(string ticker)
         {
             List<StockSectorTRX> list = new List<StockSectorTRX>();
             try

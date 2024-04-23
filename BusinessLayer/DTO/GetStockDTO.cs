@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BusinessLayer.DTO
+﻿namespace BusinessLayer.DTO
 {
-    public class GetStockDTO
+	public class GetStockDTO
     {
         public string? ticker { get; set; } // 티커
         public string? name { get; set; } // 종목명

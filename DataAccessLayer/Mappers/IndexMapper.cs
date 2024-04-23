@@ -1,15 +1,9 @@
 ﻿using DataAccessLayer.Models;
-using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccessLayer.Mappers
 {
-    public class IndexMapper : IIndexMapper
+	public class IndexMapper : IIndexMapper
     {
         private string connectionString;
 
@@ -18,7 +12,12 @@ namespace DataAccessLayer.Mappers
             connectionString = conn;
         }
 
-        public async Task<List<IndexData>> GetIndexData()
+		/// <summary>
+		/// 데이터베이스에 Index 데이터를 요청하고 해당 데이터를 리스트에 적재하고 반환하는 함수
+		/// </summary>
+		/// <returns></returns>
+		/// <exception cref="Exception"></exception>
+		public async Task<List<IndexData>> GetIndexData()
         {
             List<IndexData> list = new List<IndexData>();
             try
@@ -82,8 +81,13 @@ ORDER BY
             return list;
         }
 
-
-        public async Task<List<IndexOHLCV>> GetIndexOHLCV(string ticker)
+		/// <summary>
+		///  데이터베이스에 INDEX OHLCV 데이터를 요청하고 해당 데이터를 리스트에 적재하고 반환하는 함수
+		/// </summary>
+		/// <param name="ticker">타커</param>
+		/// <returns></returns>
+		/// <exception cref="Exception">INDEX OHLCV 리스트</exception>
+		public async Task<List<IndexOHLCV>> GetIndexOHLCV(string ticker)
         {
             List<IndexOHLCV> list = new List<IndexOHLCV>();
             try

@@ -29,7 +29,7 @@ builder.Services.AddControllersWithViews();
 
 
 // 의존성 주입
-builder.Services.AddTransient<ILoginService, LoginServiceImpl>();
+builder.Services.AddTransient<ILoginService, LoginService>();
 builder.Services.AddTransient<IStockService, StockService>();
 builder.Services.AddTransient<IIndexService, IndexService>();
 builder.Services.AddTransient<IETFService, ETFService>();

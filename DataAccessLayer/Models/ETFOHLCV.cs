@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DataAccessLayer.Models
+﻿namespace DataAccessLayer.Models
 {
-    public class ETFOHLCV
+	public class ETFOHLCV
     {
         public string ticker {  get; set; } // 티커
         public DateOnly trade_date { get; set; } // 거래일

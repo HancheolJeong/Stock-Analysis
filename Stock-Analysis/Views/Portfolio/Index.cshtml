@@ -4,9 +4,9 @@
 	ViewData["Title"] = "Index";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	int totalPurchaseCost = ViewBag.totalPurchaseCost;
-	int totalValuationProfitLoss = ViewBag.totalValuationProfitLoss;
-	int totalValuation = ViewBag.totalValuation;
-	double totalReturnPercentage = ViewBag.totalReturnPercentage;
+	int totalValuationProfitLossCost = ViewBag.totalValuationProfitLossCost;
+	int totalValuationCost = ViewBag.totalValuationCost;
+	double totalProfitLossPercentage = ViewBag.totalProfitLossPercentage;
 
 }
 <div class="container mt-5">
@@ -18,13 +18,13 @@
 			<p><strong>총매수금액 : \ </strong> @totalPurchaseCost.ToString("N0")</p>
 		</div>
 		<div class="col-md-3">
-			<p><strong>총평가손익 : \</strong> @totalValuationProfitLoss.ToString("N0")</p>
+			<p><strong>총평가손익 : \</strong> @totalValuationProfitLossCost.ToString("N0")</p>
 		</div>
 		<div class="col-md-3">
-			<p><strong>총평가금액 : \</strong> @totalValuation.ToString("N0")</p>
+			<p><strong>총평가금액 : \</strong> @totalValuationCost.ToString("N0")</p>
 		</div>
 		<div class="col-md-3">
-			<p><strong>총평가손익률 : </strong> @totalReturnPercentage.ToString("N2")%</p>
+			<p><strong>총평가손익률 : </strong> @totalProfitLossPercentage.ToString("N2")%</p>
 		</div>
 	</div>
 </div>

@@ -12,6 +12,12 @@ namespace Stock_Analysis.Controllers
             _indexService = service;
         }
 
+        /// <summary>
+        /// GET /index?pageNumber
+        /// Index 리스트를 페이지 번호를 기준으로 페이지 요청
+        /// </summary>
+        /// <param name="pageNumber"></param>
+        /// <returns></returns>
         [HttpGet("Index/{pageNumber:int}")]
         public IActionResult Index(int pageNumber = 1)
         {
@@ -32,6 +38,13 @@ namespace Stock_Analysis.Controllers
             return View(indexes);
         }
 
+        /// <summary>
+        /// GET /index/search?query&pageNumber
+        /// Index 리스트를 받아오고 페이지를 기준으로 분리해서 페이지 요청
+        /// </summary>
+        /// <param name="query">검색어</param>
+        /// <param name="pageNumber">페이지 번호</param>
+        /// <returns></returns>
         [HttpGet("Index/search")]
         public IActionResult Search(string query, int pageNumber = 1)
         {
@@ -53,6 +66,13 @@ namespace Stock_Analysis.Controllers
             return View(filteredstocks);
         }
 
+        /// <summary>
+        /// GET /index/ohlcv?ticker&axisy
+        /// Index OHLCV 리스트를 받아오고 종목명 티커 y축을 성정라고 페이지 요청
+        /// </summary>
+        /// <param name="ticker">티커</param>
+        /// <param name="axisy">라인차트 y축</param>
+        /// <returns></returns>
         [HttpGet("Index/ohlcv")]
         public async Task<IActionResult> OHLCV(string ticker, string axisy)
         {

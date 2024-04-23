@@ -3,16 +3,10 @@ using BusinessLayer.DTO;
 using DataAccessLayer.Mappers;
 using DataAccessLayer.Models;
 using Microsoft.Extensions.Caching.Memory;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BusinessLayer.Services
 {
-    public class StockService : IStockService
+	public class StockService : IStockService
     {
         IStockMapper stockMapper; // Stock테이블 데이터베이스 매핑 인터페이스 선언
         IMemoryCache _memoryCache; 
@@ -42,13 +36,19 @@ namespace BusinessLayer.Services
 
             List<Stock> list = await stockMapper.GetStockData();
             List<GetStockDTO> dtoList = mapper.Map<List<Stock>, List<GetStockDTO>>(list);
-            var kospiStocks = dtoList.Where(s => s.market == "KOSPI").ToList();
-            var kosdaqStocks = dtoList.Where(s => s.market == "KOSDAQ").ToList();
+            var kospiStocks = dtoList.Where(s => s.market == "KOSPI").ToList(); // 시장이 KOSPI인 레코드로 분리해서 저장
+            var kosdaqStocks = dtoList.Where(s => s.market == "KOSDAQ").ToList(); // 시장이 KOSDAQ인 레코드로 분리해서 저장
 
-            _memoryCache.Set("KOSPI", kospiStocks, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromHours(1)));
-            _memoryCache.Set("KOSDAQ", kosdaqStocks, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromHours(1)));
+            _memoryCache.Set("KOSPI", kospiStocks, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromHours(25))); // 캐시메모리에 저장 25시간동안 유효
+            _memoryCache.Set("KOSDAQ", kosdaqStocks, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromHours(25))); // 캐시메모리에 저장 25시간동안 유효
         }
 
+        /// <summary>
+        /// 티커로 종목명를 찾아서 반환하는 함수
+        /// </summary>
+        /// <param name="market">시장</param>
+        /// <param name="ticker">티커</param>
+        /// <returns>종목명</returns>
         public string GetNameByTicker(string market, string ticker)
         {
             if (_memoryCache.TryGetValue(market, out List<GetStockDTO> stocks))
@@ -59,9 +59,15 @@ namespace BusinessLayer.Services
                     return stock.name;
                 }
             }
-            return "Not found";
+            return "";
         }
 
+        /// <summary>
+        /// 티커로 가격을 찾아서 반환하는 함수
+        /// </summary>
+        /// <param name="market">시장</param>
+        /// <param name="ticker">티커</param>
+        /// <returns>가격</returns>
         public int GetPriceByTicker(string market, string ticker)
         {
             if (_memoryCache.TryGetValue(market, out List<GetStockDTO> stocks))
@@ -76,8 +82,13 @@ namespace BusinessLayer.Services
         }
 
 
-
-        public int GetCountByDTO(ref List<GetStockDTO> stocks, int pageSize)
+        /// <summary>
+        /// 리스트의 카운트와 페이지 사이즈를 기준으로 최대 페이지 수를 반환하는 함수
+        /// </summary>
+        /// <param name="stocks">주식 리스트</param>
+        /// <param name="pageSize">페이지 사이즈</param>
+        /// <returns>최대 페이지 수</returns>
+        public int GetPageCountByDTO(ref List<GetStockDTO> stocks, int pageSize)
         {
             if (stocks != null && stocks.Count > 0)
             {
@@ -87,6 +98,13 @@ namespace BusinessLayer.Services
             return 1;
         }
 
+        /// <summary>
+        /// 주식 리스트를 페이지사이즈를 기준으로 나눠서 반환하는 함수
+        /// </summary>
+        /// <param name="market">시장</param>
+        /// <param name="pageNumber">첫페이지 기준</param>
+        /// <param name="pageSize">페이지수</param>
+        /// <returns>주식리스트</returns>
         public List<GetStockDTO> GetStock(string market ,int pageNumber, int pageSize)
         {
             if (_memoryCache.TryGetValue(market, out List<GetStockDTO> stocks))
@@ -97,10 +115,15 @@ namespace BusinessLayer.Services
         }
 
 
-
-        public int GetKOSPICount(int pageSize)
+        /// <summary>
+        /// 주식리스트의 최대 페이지수를 반환하는 함수 
+        /// </summary>
+        /// <param name="market">시장</param>
+        /// <param name="pageSize">페이지수</param>
+        /// <returns>최대 페이지수</returns>
+        public int GetStockCount(string market, int pageSize)
         {
-            if (_memoryCache.TryGetValue("KOSPI", out List<GetStockDTO> stocks))
+            if (_memoryCache.TryGetValue(market, out List<GetStockDTO> stocks))
             {
                 int result = (int)Math.Ceiling(stocks.Count() / (double)pageSize);
                 return result;
@@ -108,33 +131,39 @@ namespace BusinessLayer.Services
             return 1;
         }
 
-        public int GetKOSDAQCount(int pageSize)
-        {
-            if (_memoryCache.TryGetValue("KOSDAQ", out List<GetStockDTO> stocks))
-            {
-                return stocks.Count() / pageSize;
-            }
-            return 1;
-        }
 
+        /// <summary>
+        /// 주식리스트에서 검색어에 해당하는 dto들을 필터링해서 반환하는 함수
+        /// </summary>
+        /// <param name="market">시장</param>
+        /// <param name="query">검색어</param>
+        /// <returns>필터링된 주식리스트</returns>
         public List<GetStockDTO> SearchStock(string market, string query)
         {
             if (_memoryCache.TryGetValue(market, out List<GetStockDTO> stocks))
             {
-                return stocks.Where(s => s.name.Contains(query) || s.ticker.Contains(query)).ToList();
+                return stocks.Where(s => s.name.Contains(query) || s.ticker.Contains(query)).ToList(); // 이름이나 티커가 검색어에 해당 될 경우
             }
             return new List<GetStockDTO>();
         }
 
-        public List<GetStockDTO> GetTopStocksByValue(string marketKey, string sortBy, int n)
+        /// <summary>
+        /// 주식리스트를 특정컬럼 기준으로 정렬하고 n만큼 랭킹안에 들어가는 요소만 남겨서 반환하는 함수
+        /// </summary>
+        /// <param name="market">시장</param>
+        /// <param name="sortBy">정렬기준</param>
+        /// <param name="n">dto의수</param>
+        /// <returns>주식리스트</returns>
+        /// <exception cref="ArgumentException"></exception>
+        public List<GetStockDTO> GetTopStocksByValue(string market, string sortBy, int n)
         {
-            if (_memoryCache.TryGetValue(marketKey, out List<GetStockDTO> stocks))
+            if (_memoryCache.TryGetValue(market, out List<GetStockDTO> stocks))
             {
                 switch (sortBy)
                 {
-                    case "marketCap":
+                    case "marketCap": // 시가총액 순서로 정렬
                         return stocks.OrderByDescending(s => s.market_value).Take(n).ToList();
-                    case "transactionAmount":
+                    case "transactionAmount": //거래대금을 기준으로 정렬
                         return stocks.OrderByDescending(s => s.transaction_amount).Take(n).ToList();
                     default:
                         throw new ArgumentException("Invalid sort parameter. Use 'market_value' or 'transaction_amount'.");
@@ -143,7 +172,11 @@ namespace BusinessLayer.Services
             return new List<GetStockDTO>();
         }
 
-
+        /// <summary>
+        /// 주식 OHLCV 티커에 해당하는 리스트를 반환하는 함수
+        /// </summary>
+        /// <param name="ticker">티커</param>
+        /// <returns>주식 OHLCV 리스트</returns>
         public async Task<List<GetStockOHLCVDTO>> GetStockOHLCV(string ticker)
         {
             try
@@ -163,6 +196,11 @@ namespace BusinessLayer.Services
             }
         }
 
+        /// <summary>
+        /// 주식 Fundamental 티커에 해당하는 리스트를 반환하는 함수
+        /// </summary>
+        /// <param name="ticker">티커</param>
+        /// <returns>주식 Fundamental 리스트</returns>
         public async Task<List<GetStockFundamentalDTO>> GetStockFundamental(string ticker)
         {
             try
@@ -182,6 +220,11 @@ namespace BusinessLayer.Services
             }
         }
 
+        /// <summary>
+        /// 주식 MarketCap 티커에 해당하는 리스트를 반환하는 함수
+        /// </summary>
+        /// <param name="ticker">티커</param>
+        /// <returns>주식 Fundamental 리스트</returns>
         public async Task<List<GetStockMarketCapDTO>> GetStockMarketCap(string ticker)
         {
             try
@@ -201,6 +244,11 @@ namespace BusinessLayer.Services
             }
         }
 
+        /// <summary>
+        /// 티커에 해당되는 주식 MarketTRX를 반환하는 함수
+        /// </summary>
+        /// <param name="ticker">티커</param>
+        /// <returns>주식 MarketTRX 리스트</returns>
         public async Task<List<GetStockMarketTRXDTO>> GetStockMarketTRX(string ticker)
         {
             try
@@ -220,6 +268,11 @@ namespace BusinessLayer.Services
             }
         }
 
+        /// <summary>
+        /// 티커에 해당하는 주식 SectorTrx를 반환하는 함수
+        /// </summary>
+        /// <param name="ticker">티커</param>
+        /// <returns>주식 SectorTRX 리스트</returns>
         public async Task<List<GetStockSectorTRXDTO>> GetStockSectorTRX(string ticker)
         {
             try

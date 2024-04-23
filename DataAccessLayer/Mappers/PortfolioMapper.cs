@@ -1,14 +1,9 @@
 ﻿using DataAccessLayer.Models;
-using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccessLayer.Mappers
 {
-    public class PortfolioMapper : IPortfolioMapper
+	public class PortfolioMapper : IPortfolioMapper
     {
         private string connectionString;
         public PortfolioMapper(string conn)
@@ -16,6 +11,11 @@ namespace DataAccessLayer.Mappers
             connectionString = conn;
         }
 
+        /// <summary>
+        /// 포트폴리오 데이터를 추가하고 해당 처리결과를 반환하는 함수
+        /// </summary>
+        /// <param name="portfolio">포트폴리오 엔티티</param>
+        /// <returns>처리결과</returns>
         public async Task<bool> Create(Portfolio portfolio)
         {
             try
@@ -46,6 +46,12 @@ namespace DataAccessLayer.Mappers
             }
         }
 
+        /// <summary>
+        /// email을 기준으로 포트폴리오 데이터를 요청하고 해당 데이터를 리스트에 적재하고 반환하는 함수
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task<List<Portfolio>> GetPortfolio(string email)
         {
             List<Portfolio> list = new List<Portfolio>();
@@ -87,6 +93,12 @@ namespace DataAccessLayer.Mappers
             return list;
         }
 
+        /// <summary>
+        /// id를 기준으로 포트폴리오 레코드를 삭제하고 결과를 반환하는 함수
+        /// </summary>
+        /// <param name="id">고유 ID</param>
+        /// <returns>처리결과</returns>
+        /// <exception cref="Exception"></exception>
 		public async Task<bool> DeletePortfolio(int id)
 		{
 			try

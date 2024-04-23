@@ -1,10 +1,9 @@
 ﻿using BusinessLayer.DTO;
-using DataAccessLayer.Models;
 
 namespace BusinessLayer.Services
 {
-    public interface ILoginService
+	public interface ILoginService
     {
-        Task<bool> Login(GetUserDTO getUserDTO);
+        Task<bool> Login(GetUserDTO getUserDTO);  //사용자를 추가하거나 업데이트하는 함수 처리결과를 반환한다 
     }
 }

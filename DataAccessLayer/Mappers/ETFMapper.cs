@@ -1,21 +1,22 @@
 ﻿using DataAccessLayer.Models;
-using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccessLayer.Mappers
 {
-    public class ETFMapper : IETFMapper
+	public class ETFMapper : IETFMapper
     {
         private string connectionString;
         public ETFMapper(string conn)
         {
-            connectionString = conn;
+            connectionString = conn; // 의존성 주입
         }
 
+
+        /// <summary>
+        /// 데이터베이스에 ETF데이터를 요청하고 해당 데이터를 리스트에 적재하고 반환하는 함수
+        /// </summary>
+        /// <returns>ETF 리스트</returns>
+        /// <exception cref="Exception"></exception>
         public async Task<List<ETF>> GetETFData()
         {
             List<ETF> list = new List<ETF>();
@@ -81,7 +82,13 @@ ORDER BY
         }
 
 
-        public async Task<List<ETFOHLCV>> GetETFOHLCV(string ticker)
+		/// <summary>
+		/// 데이터베이스에 ETF OHLCV 데이터를 요청하고 해당 데이터를 리스트에 적재하고 반환하는 함수
+		/// </summary>
+		/// <param name="ticker">티커</param>
+		/// <returns>ETF OHLCV 리스트</returns>
+		/// <exception cref="Exception"></exception>
+		public async Task<List<ETFOHLCV>> GetETFOHLCV(string ticker)
         {
             List<ETFOHLCV> list = new List<ETFOHLCV>();
             try

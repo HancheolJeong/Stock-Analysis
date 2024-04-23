@@ -9,6 +9,7 @@ namespace Stock_Analysis.Controllers
         private IPortfolioService _portfolioService;
         private IStockService _stockService;
         private IETFService _etfService;
+
         public PortfolioController(IPortfolioService portfolioService, IStockService stockService, IETFService etfService)
         {
             _portfolioService = portfolioService;
@@ -16,6 +17,11 @@ namespace Stock_Analysis.Controllers
             _etfService = etfService;
         }
 
+        /// <summary>
+        /// GET /portfolio
+        /// 포트폴리오를 요청 
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> Index()
         {
             GetUserDTO? userDto = HttpContext.Session.Get<GetUserDTO>("LoginUser");
@@ -31,34 +37,43 @@ namespace Stock_Analysis.Controllers
 
             foreach (var stock in stocks)
             {
-                if (stock.market == "KOSPI")
+                if (stock.market == "KOSPI") // 시장 코스피일때
                 {
-                    stock.name = _stockService.GetNameByTicker("KOSPI",stock.ticker);
+                    stock.name = _stockService.GetNameByTicker("KOSPI",stock.ticker); 
                     stock.current_price = _stockService.GetPriceByTicker("KOSPI", stock.ticker);
                 }
-                else if (stock.market == "KOSDAQ")
+                else if (stock.market == "KOSDAQ") // 시장 코스닥일때
                 {
                     stock.name = _stockService.GetNameByTicker("KOSDAQ", stock.ticker);
                     stock.current_price = _stockService.GetPriceByTicker("KOSDAQ", stock.ticker);
                 }
-                else if (stock.market == "ETF")
+                else if (stock.market == "ETF") // 시장 ETF 일때
                 {
                     stock.name = _etfService.GetNameByTicker(stock.ticker);
                     stock.current_price = _etfService.GetPriceByTicker(stock.ticker);
                 }
             }
 
-            int totalPurchaseCost = _portfolioService.GetTotalPurchaseCost(ref stocks);
-            int totalValuationProfitLoss = _portfolioService.GetTotalValuationProfitLoss(ref stocks);
-            int totalValuation = _portfolioService.GetTotalValuation(ref stocks);
-            double totalReturnPercentage = _portfolioService.GetTotalReturnPercentage(ref stocks);
+            int totalPurchaseCost = _portfolioService.GetTotalPurchaseCost(ref stocks); // 총매수금액
+            int totalValuationProfitLossCost = _portfolioService.GetTotalValuationProfitLossCost(ref stocks); //총평가손익
+            int totalValuationCost = _portfolioService.GetTotalValuationCost(ref stocks); // 총평가금액
+            double totalProfitLossPercentage = _portfolioService.GetTotalProfitLossPercentage(ref stocks); // 총평가손익률
             ViewBag.totalPurchaseCost  = totalPurchaseCost;
-            ViewBag.totalValuationProfitLoss = totalValuationProfitLoss;
-            ViewBag.totalValuation = totalValuation;
-            ViewBag.totalReturnPercentage = totalReturnPercentage;
+            ViewBag.totalValuationProfitLoss = totalValuationProfitLossCost;
+            ViewBag.totalValuation = totalValuationCost;
+            ViewBag.totalReturnPercentage = totalProfitLossPercentage;
             return View(stocks);
         }
 
+        /// <summary>
+        /// POST /portfolio/add?quantity&price&ticker&market
+        /// 새로운 포트폴리오를 추가 수량, 단가, 티커, 시장으로 dto를 만들고 서비스에 생성을 요청한다.
+        /// </summary>
+        /// <param name="quantity">수량</param>
+        /// <param name="price">단가</param>
+        /// <param name="ticker">티커</param>
+        /// <param name="market">시장</param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Add(int quantity, int price, string ticker, string market)
         {
@@ -88,6 +103,12 @@ namespace Stock_Analysis.Controllers
             }
         }
 
+        /// <summary>
+        /// DELETE /portfolio/delete?id
+        /// 포트폴리오 삭제를 요청
+        /// </summary>
+        /// <param name="id">고유 ID</param>
+        /// <returns></returns>
 		[HttpDelete]
 		public async Task<IActionResult> Delete(int id)
 		{
