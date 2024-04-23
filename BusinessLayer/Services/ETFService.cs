@@ -34,7 +34,7 @@ namespace BusinessLayer.Services
 
             List<ETF> list = await etfMapper.GetETFData();
             List<GetETFDTO> dtoList = mapper.Map<List<ETF>, List<GetETFDTO>>(list);
-
+            _memoryCache.Remove("ETF");
             _memoryCache.Set("ETF", dtoList, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromHours(25)));
         }
 

@@ -33,7 +33,7 @@ namespace BusinessLayer.Services
 
             List<IndexData> list = await indexMapper.GetIndexData();
             List<GetIndexDTO> dtoList = mapper.Map<List<IndexData>, List<GetIndexDTO>>(list);
-
+            _memoryCache.Remove("INDEX");
             _memoryCache.Set("INDEX", dtoList, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromHours(25)));
         }
 

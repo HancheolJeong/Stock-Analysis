@@ -39,5 +39,10 @@ namespace Stock_Analysis.Controllers
 			return View();
         }
 
-    }
+		public IActionResult Maintenance()
+		{
+			return View();
+		}
+
+	}
 }

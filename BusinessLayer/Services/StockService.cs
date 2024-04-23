@@ -38,7 +38,8 @@ namespace BusinessLayer.Services
             List<GetStockDTO> dtoList = mapper.Map<List<Stock>, List<GetStockDTO>>(list);
             var kospiStocks = dtoList.Where(s => s.market == "KOSPI").ToList(); // 시장이 KOSPI인 레코드로 분리해서 저장
             var kosdaqStocks = dtoList.Where(s => s.market == "KOSDAQ").ToList(); // 시장이 KOSDAQ인 레코드로 분리해서 저장
-
+            _memoryCache.Remove("KOSPI");
+            _memoryCache.Remove("KOSDAQ");
             _memoryCache.Set("KOSPI", kospiStocks, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromHours(25))); // 캐시메모리에 저장 25시간동안 유효
             _memoryCache.Set("KOSDAQ", kosdaqStocks, new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromHours(25))); // 캐시메모리에 저장 25시간동안 유효
         }
