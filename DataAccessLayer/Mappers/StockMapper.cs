@@ -25,54 +25,31 @@ namespace DataAccessLayer.Mappers
                 {
                     await sqlConnection.OpenAsync();
                     string query = @"
-WITH LatestTradeDates AS (
-    SELECT 
-        ticker, 
-        MAX(trade_date) AS LatestTradeDate
-    FROM 
-        stock.stocks_ohlcv
-    GROUP BY 
-        ticker
+WITH ohlcv_date AS (
+    SELECT ticker, MAX(trade_date) AS trade_date
+    FROM stock.stocks_ohlcv
+    GROUP BY ticker
 ),
-Ohlcv AS (
-    SELECT 
-        o.ticker, 
-        o.trade_date, 
-        o.closing_price
-    FROM 
-        stock.stocks_ohlcv o
-    JOIN 
-        LatestTradeDates ltd ON o.ticker = ltd.ticker AND o.trade_date = ltd.LatestTradeDate
+ohlcv AS (
+    SELECT o.ticker, o.trade_date, o.closing_price
+    FROM stock.stocks_ohlcv o
+    JOIN ohlcv_date od ON o.ticker = od.ticker AND o.trade_date = od.trade_date
 ),
-MarketCap AS (
-    SELECT 
-        m.ticker, 
-        m.trade_date, 
-        m.market_value, 
-        m.trading_volume, 
-        m.listed_stocks,
-        m.transaction_amount
-    FROM 
-        stock.stocks_market_cap m
-    JOIN 
-        LatestTradeDates ltd ON m.ticker = ltd.ticker AND m.trade_date = ltd.LatestTradeDate
+marketcap_date AS (
+    SELECT ticker, MAX(trade_date) AS trade_date
+    FROM stock.stocks_market_cap
+    GROUP BY ticker
+),
+marketcap AS (
+    SELECT m.ticker, m.trade_date, m.market_value, m.trading_volume, m.listed_stocks, m.transaction_amount
+    FROM stock.stocks_market_cap m
+    JOIN marketcap_date md ON m.ticker = md.ticker AND m.trade_date = md.trade_date
 )
-SELECT 
-    s.name,
-    s.ticker,
-	s.market,
-    o.closing_price,
-    m.market_value,
-    m.trading_volume,
-    m.listed_stocks,
-    m.transaction_amount,
-	o.trade_date
-FROM 
-    stock.stocks s
-JOIN 
-    Ohlcv o ON s.ticker = o.ticker
-JOIN 
-    MarketCap m ON s.ticker = m.ticker;
+SELECT s.ticker, s.name, s.market, o.closing_price, m.market_value, m.trading_volume, m.listed_stocks, m.transaction_amount, o.trade_date
+FROM stock.stocks s
+JOIN ohlcv o ON s.ticker = o.ticker
+JOIN marketcap m ON s.ticker = m.ticker
+ORDER BY s.ticker ASC;
 ;";
 
                     using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))

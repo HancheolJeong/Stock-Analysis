@@ -4,9 +4,9 @@
 	ViewData["Title"] = "Index";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	int totalPurchaseCost = ViewBag.totalPurchaseCost;
-	int totalValuationProfitLossCost = ViewBag.totalValuationProfitLossCost;
-	int totalValuationCost = ViewBag.totalValuationCost;
-	double totalProfitLossPercentage = ViewBag.totalProfitLossPercentage;
+	int totalValuationProfitLossCost = Convert.ToInt32(ViewBag.totalValuationProfitLossCost);
+	int totalValuationCost = Convert.ToInt32(ViewBag.totalValuationCost);
+	double totalProfitLossPercentage = Convert.ToDouble(ViewBag.totalProfitLossPercentage);
 
 }
 <div class="container mt-5">

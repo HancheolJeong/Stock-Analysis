@@ -26,30 +26,21 @@ namespace DataAccessLayer.Mappers
                 {
                     await sqlConnection.OpenAsync();
                     string query = @"
-WITH LatestDates AS (
-    SELECT 
-        ticker, 
-        MAX(trade_date) AS LatestDate
-    FROM 
-        stock.indexes_ohlcv
-    GROUP BY 
-        ticker
+WITH ohlcv_date AS (
+    SELECT ticker,MAX(trade_date) AS trade_date 
+	FROM stock.indexes_ohlcv 
+	GROUP BY ticker
+),
+ohlcv AS (
+	SELECT o.ticker,o.closing_price,o.market_value, o.trading_volume, o.trade_date 
+	FROM stock.indexes_ohlcv o
+	JOIN ohlcv_date od ON o.ticker = od.ticker AND o.trade_date = od.trade_date
 )
-SELECT 
-    i.ticker, 
-    i.name, 
-    o.closing_price, 
-    o.market_value, 
-    o.trading_volume, 
-    o.trade_date
-FROM 
-    stock.indexes i
-JOIN 
-    stock.indexes_ohlcv o ON i.ticker = o.ticker
-JOIN 
-    LatestDates ld ON o.ticker = ld.ticker AND o.trade_date = ld.LatestDate
-ORDER BY 
-    i.ticker ASC;
+SELECT i.ticker, i.name, o.closing_price, o.market_value, o.trading_volume, o.trade_date
+FROM stock.indexes i
+JOIN ohlcv o ON i.ticker = o.ticker
+ORDER BY i.ticker ASC
+
 ;";
 
                     using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
