@@ -4,9 +4,9 @@
 	ViewData["Title"] = "Index";
 	Layout = "~/Views/Shared/_Layout.cshtml";
 	int totalPurchaseCost = ViewBag.totalPurchaseCost;
-	int totalValuationProfitLossCost = Convert.ToInt32(ViewBag.totalValuationProfitLossCost);
-	int totalValuationCost = Convert.ToInt32(ViewBag.totalValuationCost);
-	double totalProfitLossPercentage = Convert.ToDouble(ViewBag.totalProfitLossPercentage);
+	int totalValuationProfitLossCost = ViewBag.totalValuationProfitLossCost;
+	int totalValuationCost = ViewBag.totalValuationCost;
+	double totalProfitLossPercentage = ViewBag.totalProfitLossPercentage;
 
 }
 <div class="container mt-5">
@@ -50,32 +50,31 @@
 			<tbody>
 				@foreach (var group in Model.GroupBy(stock => stock.ticker).Select(g => new
 				{
-					Ticker = g.Key,
-					Name = g.First().name,
-					Market = g.First().market,
-					TotalAmount = g.Sum(stock => stock.amount),
-					AverageUnitPrice = g.Sum(stock => stock.unit_price * stock.amount) / (double)g.Sum(stock => stock.amount),
-					CurrentPrice = g.First().current_price,
-					TotalValue = g.Sum(stock => stock.TotalValue),
-					Valuation = g.Sum(stock => stock.amount * stock.current_price),
-					ProfitLoss = g.Sum(stock => (stock.current_price - stock.unit_price) * stock.amount),
-					TotalPurchaseCost = g.Sum(stock => stock.unit_price * stock.amount),
-					ProfitLossPercentage = g.Sum(stock => stock.unit_price * stock.amount) != 0
+					ticker = g.Key,
+					name = g.First().name,
+					market = g.First().market,
+					totalAmount = g.Sum(stock => stock.amount),
+					averageUnitPrice = g.Sum(stock => stock.unit_price * stock.amount) / (double)g.Sum(stock => stock.amount),
+					currentPrice = g.First().current_price,
+					totalValue = g.Sum(stock => stock.TotalValue),
+					valuation = g.Sum(stock => stock.amount * stock.current_price),
+					profitLoss = g.Sum(stock => (stock.current_price - stock.unit_price) * stock.amount),
+					profitLossPercentage = g.Sum(stock => stock.unit_price * stock.amount) != 0
 									? (g.Sum(stock => (stock.current_price - stock.unit_price) * stock.amount) / (double)g.Sum(stock => stock.unit_price * stock.amount)) * 100
 									: 0
 				}))
 				{
 					<tr>
-						<td>@group.Ticker</td>
-						<td>@group.Name</td>
-						<td>@group.TotalAmount.ToString("N0")</td>
-						<td>\@group.AverageUnitPrice.ToString("N0")</td>
-						<td>\@Convert.ToInt32(group.CurrentPrice).ToString("N0")</td>
-						<td>\@Convert.ToInt32(group.TotalValue).ToString("N0")</td>
-						<td>\@Convert.ToInt32(group.Valuation).ToString("N0")</td>
-						<td>\@Convert.ToInt32(group.ProfitLoss).ToString("N0")</td>
-						<td>@Convert.ToDouble(group.ProfitLossPercentage).ToString("N2")%</td>
-						<td>@group.Market</td>
+						<td>@group.ticker</td>
+						<td>@group.name</td>
+						<td>@group.totalAmount.ToString("N0")</td>
+						<td>\@group.averageUnitPrice.ToString("N0")</td>
+						<td>\@Convert.ToInt32(group.currentPrice).ToString("N0")</td>
+						<td>\@Convert.ToInt32(group.totalValue).ToString("N0")</td>
+						<td>\@Convert.ToInt32(group.valuation).ToString("N0")</td>
+						<td>\@Convert.ToInt32(group.profitLoss).ToString("N0")</td>
+						<td>@Convert.ToDouble(group.profitLossPercentage).ToString("N2")%</td>
+						<td>@group.market</td>
 					</tr>
 				}
 			</tbody>

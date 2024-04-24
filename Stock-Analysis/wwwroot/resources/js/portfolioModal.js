@@ -1,23 +1,14 @@
-﻿$(document).ready(function () {
-    $("#myBtn").click(function () {
-        $("#myModal").modal('show');
-    });
+﻿function showModal(ticker, market) {
+    $("#myModal").modal('show');
 
-    $(".close").click(function () {
-        $("#myModal").modal('hide');
+    $(".modal-footer .btn-primary").off('click').on('click', function () {
+        submitPortfolio(ticker, market);
     });
-});
+}
 
-$(window).click(function (event) {
-    if (event.target == $("#myModal")[0]) {
-        $("#myModal").modal('hide');
-    }
-});
-function submitPortfolio() {
+function submitPortfolio(ticker, market) {
     var quantity = $('#quantity').val();
     var price = $('#price').val();
-    var ticker = '@ticker';
-    var market = '@market';
 
     $.ajax({
         type: "POST",

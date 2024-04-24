@@ -37,7 +37,7 @@
     <div class="flex-grow-1 text-center">
         <h1 class="mb-0">@name (@ticker)</h1>
     </div>
-    <button id="myBtn" class="btn btn-primary">포트폴리오 추가</button>
+    <button id="myBtn" class="btn btn-primary" onclick="showModal('@ticker', '@market')">포트폴리오 추가</button>
 </div>
 
 @Html.Partial("_ModalDialog")

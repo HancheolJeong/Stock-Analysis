@@ -10,7 +10,7 @@
 				.then(data => {
 					if (data.success) {
 						alert(data.message);
-						location.reload(); // 페이지 새로고침
+						location.reload();
 					} else {
 						alert(data.message);
 					}

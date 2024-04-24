@@ -59,9 +59,9 @@ namespace Stock_Analysis.Controllers
             int totalValuationCost = _portfolioService.GetTotalValuationCost(ref stocks); // 총평가금액
             double totalProfitLossPercentage = _portfolioService.GetTotalProfitLossPercentage(ref stocks); // 총평가손익률
             ViewBag.totalPurchaseCost  = totalPurchaseCost;
-            ViewBag.totalValuationProfitLoss = totalValuationProfitLossCost;
-            ViewBag.totalValuation = totalValuationCost;
-            ViewBag.totalReturnPercentage = totalProfitLossPercentage;
+            ViewBag.totalValuationProfitLossCost = totalValuationProfitLossCost;
+            ViewBag.totalValuationCost = totalValuationCost;
+            ViewBag.totalProfitLossPercentage = totalProfitLossPercentage;
             return View(stocks);
         }
 
