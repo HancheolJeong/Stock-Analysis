@@ -8,9 +8,11 @@ namespace Stock_Analysis.Controllers
         private readonly IStockService _stockService;
         private const int _PageSize = 100;
         private const string _market = "KOSPI";
-        public KOSPIController(IStockService service)
+        private readonly ILogger<KOSPIController> _logger;
+        public KOSPIController(IStockService service, ILogger<KOSPIController> logger)
         {
             _stockService = service;
+            _logger = logger;
         }
 
 		/// <summary>
@@ -22,8 +24,20 @@ namespace Stock_Analysis.Controllers
 		[HttpGet("KOSPI/{pageNumber:int}")]
         public IActionResult Index(int pageNumber = 1)
         {
-            var stocks = _stockService.GetStock(_market ,pageNumber, _PageSize);
-            int totalPages = _stockService.GetStockCount(_market, _PageSize);
+            (var stocks, string? err) = _stockService.GetStock(_market, pageNumber, _PageSize);
+            (int totalPages, string? err2) = _stockService.GetStockCount(_market, _PageSize);
+            if (err != null || err2 != null)
+            {
+                if (err != null)
+                {
+                    _logger.LogError(err);
+                }
+                else
+                {
+                    _logger.LogError(err2);
+                }
+                return Redirect("/Exception");
+            }
             ViewBag.CurrentPage = pageNumber;
             ViewBag.TotalPages = totalPages;
             if (pageNumber == 1) // 무한루프로 빠지는 것을 막기 위한 로직
@@ -48,8 +62,20 @@ namespace Stock_Analysis.Controllers
 		[HttpGet("KOSPI/search")]
         public IActionResult Search(string query, int pageNumber = 1)
         {
-            var stocks = _stockService.SearchStock(_market, query);
-            int totalPages = _stockService.GetPageCountByDTO(ref stocks, _PageSize);
+            (var stocks, string? err) = _stockService.SearchStock(_market, query);
+            (int totalPages, string? err2) = _stockService.GetPageCountByDTO(ref stocks, _PageSize);
+            if (err != null || err2 != null)
+            {
+                if (err != null)
+                {
+                    _logger.LogError(err);
+                }
+                else
+                {
+                    _logger.LogError(err2);
+                }
+                return Redirect("/Exception");
+            }
             var filteredstocks = stocks.Skip(pageNumber - 1).Take(+_PageSize).ToList();
             ViewBag.CurrentPage = pageNumber;
             ViewBag.TotalPages = totalPages;
@@ -77,8 +103,20 @@ namespace Stock_Analysis.Controllers
 		[HttpGet("KOSPI/ohlcv")]
         public async Task<IActionResult> OHLCV(string ticker, string axisy)
         {
-            var stocks = await _stockService.GetStockOHLCV(ticker);
-            string name = _stockService.GetNameByTicker(_market ,ticker);
+            (var stocks, string? err) = await _stockService.GetStockOHLCV(ticker);
+            (string name, string? err2) = _stockService.GetNameByTicker(_market, ticker);
+            if (err != null || err2 != null)
+            {
+                if (err != null)
+                {
+                    _logger.LogError(err);
+                }
+                else
+                {
+                    _logger.LogError(err2);
+                }
+                return Redirect("/Exception");
+            }
             ViewBag.name = name;
             ViewBag.ticker = ticker;
             ViewBag.market = _market; 
@@ -96,8 +134,20 @@ namespace Stock_Analysis.Controllers
 		[HttpGet("KOSPI/fundamental")]
         public async Task<IActionResult> Fundamental(string ticker, string axisy)
         {
-            var stocks = await _stockService.GetStockFundamental(ticker);
-            string name = _stockService.GetNameByTicker(_market, ticker);
+            (var stocks, string? err) = await _stockService.GetStockFundamental(ticker);
+            (string name, string? err2) = _stockService.GetNameByTicker(_market, ticker);
+            if (err != null || err2 != null)
+            {
+                if (err != null)
+                {
+                    _logger.LogError(err);
+                }
+                else
+                {
+                    _logger.LogError(err2);
+                }
+                return Redirect("/Exception");
+            }
             ViewBag.name = name;
             ViewBag.ticker = ticker;
             ViewBag.market = _market;
@@ -115,8 +165,20 @@ namespace Stock_Analysis.Controllers
 		[HttpGet("KOSPI/marketcap")]
         public async Task<IActionResult> MarketCap(string ticker, string axisy)
         {
-            var stocks = await _stockService.GetStockMarketCap(ticker);
-            string name = _stockService.GetNameByTicker(_market, ticker);
+            (var stocks, string? err) = await _stockService.GetStockMarketCap(ticker);
+            (string name, string? err2) = _stockService.GetNameByTicker(_market, ticker);
+            if (err != null || err2 != null)
+            {
+                if (err != null)
+                {
+                    _logger.LogError(err);
+                }
+                else
+                {
+                    _logger.LogError(err2);
+                }
+                return Redirect("/Exception");
+            }
             ViewBag.name = name;
             ViewBag.ticker = ticker;
             ViewBag.market = _market;
@@ -134,8 +196,20 @@ namespace Stock_Analysis.Controllers
 		[HttpGet("KOSPI/markettrx")]
         public async Task<IActionResult> MarketTRX(string ticker, string axisy)
         {
-            var stocks = await _stockService.GetStockMarketTRX(ticker);
-            string name = _stockService.GetNameByTicker(_market, ticker);
+            (var stocks, string? err) = await _stockService.GetStockMarketTRX(ticker);
+            (string name, string? err2) = _stockService.GetNameByTicker(_market, ticker);
+            if (err != null || err2 != null)
+            {
+                if (err != null)
+                {
+                    _logger.LogError(err);
+                }
+                else
+                {
+                    _logger.LogError(err2);
+                }
+                return Redirect("/Exception");
+            }
             ViewBag.name = name;
             ViewBag.ticker = ticker;
             ViewBag.market = _market;
@@ -153,8 +227,20 @@ namespace Stock_Analysis.Controllers
 		[HttpGet("KOSPI/sectortrx")]
         public async Task<IActionResult> SectorTRX(string ticker, string axisy)
         {
-            var stocks = await _stockService.GetStockSectorTRX(ticker);
-            string name = _stockService.GetNameByTicker(_market, ticker);
+            (var stocks, string? err) = await _stockService.GetStockSectorTRX(ticker);
+            (string name, string? err2) = _stockService.GetNameByTicker(_market, ticker);
+            if (err != null || err2 != null)
+            {
+                if (err != null)
+                {
+                    _logger.LogError(err);
+                }
+                else
+                {
+                    _logger.LogError(err2);
+                }
+                return Redirect("/Exception");
+            }
             ViewBag.name = name;
             ViewBag.ticker = ticker;
             ViewBag.market = _market;

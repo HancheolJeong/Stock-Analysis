@@ -50,17 +50,26 @@ namespace BusinessLayer.Services
         /// <param name="market">시장</param>
         /// <param name="ticker">티커</param>
         /// <returns>종목명</returns>
-        public string GetNameByTicker(string market, string ticker)
+        public (string, string?) GetNameByTicker(string market, string ticker)
         {
-            if (_memoryCache.TryGetValue(market, out List<GetStockDTO> stocks))
+            try
             {
-                var stock = stocks.FirstOrDefault(s => s.ticker == ticker);
-                if (stock != null)
+                if (_memoryCache.TryGetValue(market, out List<GetStockDTO> stocks))
                 {
-                    return stock.name;
+                    var stock = stocks.FirstOrDefault(s => s.ticker == ticker);
+                    if (stock != null)
+                    {
+                        return (stock.name, null);
+                    }
                 }
+                return ("", null);
             }
-            return "";
+            catch (Exception ex) 
+            {
+                string err = $"예외 발생 : BusinessLayer/Services/StockService/(Function)GetNameByTicker {ex.Message}";
+                return ("", err);
+            }
+
         }
 
         /// <summary>
@@ -69,17 +78,26 @@ namespace BusinessLayer.Services
         /// <param name="market">시장</param>
         /// <param name="ticker">티커</param>
         /// <returns>가격</returns>
-        public int GetPriceByTicker(string market, string ticker)
+        public (int, string?) GetPriceByTicker(string market, string ticker)
         {
-            if (_memoryCache.TryGetValue(market, out List<GetStockDTO> stocks))
+            try
             {
-                var stock = stocks.FirstOrDefault(s => s.ticker == ticker);
-                if (stock != null)
+                if (_memoryCache.TryGetValue(market, out List<GetStockDTO> stocks))
                 {
-                    return stock.closing_price;
+                    var stock = stocks.FirstOrDefault(s => s.ticker == ticker);
+                    if (stock != null)
+                    {
+                        return (stock.closing_price, null);
+                    }
                 }
+                return (0, null);
             }
-            return 0;
+            catch (Exception ex) 
+            {
+                string err = $"예외 발생 : BusinessLayer/Services/StockService/(Function)GetStockSectorTRX {ex.Message}";
+                return (0, err);
+            }
+
         }
 
 
@@ -89,14 +107,23 @@ namespace BusinessLayer.Services
         /// <param name="stocks">주식 리스트</param>
         /// <param name="pageSize">페이지 사이즈</param>
         /// <returns>최대 페이지 수</returns>
-        public int GetPageCountByDTO(ref List<GetStockDTO> stocks, int pageSize)
+        public (int, string?) GetPageCountByDTO(ref List<GetStockDTO> stocks, int pageSize)
         {
-            if (stocks != null && stocks.Count > 0)
+            try
             {
-                int result = (int)Math.Ceiling(stocks.Count / (double)pageSize);
-                return result;
+                if (stocks != null && stocks.Count > 0)
+                {
+                    int result = (int)Math.Ceiling(stocks.Count / (double)pageSize);
+                    return (result, null);
+                }
+                return (1, null);
             }
-            return 1;
+            catch (Exception ex) 
+            {
+                string err = $"예외 발생 : BusinessLayer/Services/StockService/(Function)GetPageCountByDTO {ex.Message}";
+                return (1, err);
+            }
+
         }
 
         /// <summary>
@@ -106,13 +133,22 @@ namespace BusinessLayer.Services
         /// <param name="pageNumber">첫페이지 기준</param>
         /// <param name="pageSize">페이지수</param>
         /// <returns>주식리스트</returns>
-        public List<GetStockDTO> GetStock(string market ,int pageNumber, int pageSize)
+        public (List<GetStockDTO>, string?) GetStock(string market ,int pageNumber, int pageSize)
         {
-            if (_memoryCache.TryGetValue(market, out List<GetStockDTO> stocks))
+            try
             {
-                return stocks.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                if (_memoryCache.TryGetValue(market, out List<GetStockDTO> stocks))
+                {
+                    return (stocks.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList(), null);
+                }
+                return (new List<GetStockDTO>(), null);
             }
-            return new List<GetStockDTO>();
+            catch (Exception ex) 
+            {
+                string err = $"예외 발생 : BusinessLayer/Services/StockService/(Function)GetStock {ex.Message}";
+                return (new List<GetStockDTO>(), err);
+            }
+
         }
 
 
@@ -122,14 +158,23 @@ namespace BusinessLayer.Services
         /// <param name="market">시장</param>
         /// <param name="pageSize">페이지수</param>
         /// <returns>최대 페이지수</returns>
-        public int GetStockCount(string market, int pageSize)
+        public (int, string?) GetStockCount(string market, int pageSize)
         {
-            if (_memoryCache.TryGetValue(market, out List<GetStockDTO> stocks))
+            try
             {
-                int result = (int)Math.Ceiling(stocks.Count() / (double)pageSize);
-                return result;
+                if (_memoryCache.TryGetValue(market, out List<GetStockDTO> stocks))
+                {
+                    int result = (int)Math.Ceiling(stocks.Count() / (double)pageSize);
+                    return (result, null);
+                }
+                return (1, null);
             }
-            return 1;
+            catch (Exception ex) 
+            {
+                string err = $"예외 발생 : BusinessLayer/Services/StockService/(Function)GetStockCount {ex.Message}";
+                return (1, err);
+            }
+
         }
 
 
@@ -139,13 +184,22 @@ namespace BusinessLayer.Services
         /// <param name="market">시장</param>
         /// <param name="query">검색어</param>
         /// <returns>필터링된 주식리스트</returns>
-        public List<GetStockDTO> SearchStock(string market, string query)
+        public (List<GetStockDTO>, string?) SearchStock(string market, string query)
         {
-            if (_memoryCache.TryGetValue(market, out List<GetStockDTO> stocks))
+            try
             {
-                return stocks.Where(s => s.name.Contains(query) || s.ticker.Contains(query)).ToList(); // 이름이나 티커가 검색어에 해당 될 경우
+                if (_memoryCache.TryGetValue(market, out List<GetStockDTO> stocks))
+                {
+                    return (stocks.Where(s => s.name.Contains(query) || s.ticker.Contains(query)).ToList(), null); // 이름이나 티커가 검색어에 해당 될 경우
+                }
+                return (new List<GetStockDTO>(), null);
             }
-            return new List<GetStockDTO>();
+            catch (Exception ex) 
+            {
+                string err = $"예외 발생 : BusinessLayer/Services/StockService/(Function)SearchStock {ex.Message}";
+                return (new List<GetStockDTO>(), err);
+            }
+
         }
 
         /// <summary>
@@ -156,21 +210,28 @@ namespace BusinessLayer.Services
         /// <param name="n">dto의수</param>
         /// <returns>주식리스트</returns>
         /// <exception cref="ArgumentException"></exception>
-        public List<GetStockDTO> GetTopStocksByValue(string market, string sortBy, int n)
+        public (List<GetStockDTO>, string?) GetTopStocksByValue(string market, string sortBy, int n)
         {
-            if (_memoryCache.TryGetValue(market, out List<GetStockDTO> stocks))
+            try
             {
-                switch (sortBy)
+                if (_memoryCache.TryGetValue(market, out List<GetStockDTO> stocks))
                 {
-                    case "marketCap": // 시가총액 순서로 정렬
-                        return stocks.OrderByDescending(s => s.market_value).Take(n).ToList();
-                    case "transactionAmount": //거래대금을 기준으로 정렬
-                        return stocks.OrderByDescending(s => s.transaction_amount).Take(n).ToList();
-                    default:
-                        throw new ArgumentException("Invalid sort parameter. Use 'market_value' or 'transaction_amount'.");
+                    switch (sortBy)
+                    {
+                        case "marketCap": // 시가총액 순서로 정렬
+                            return (stocks.OrderByDescending(s => s.market_value).Take(n).ToList(), null);
+                        case "transactionAmount": //거래대금을 기준으로 정렬
+                            return (stocks.OrderByDescending(s => s.transaction_amount).Take(n).ToList(), null);
+                    }
                 }
+                return (stocks.OrderByDescending(s => s.market_value).Take(n).ToList(), null); // 아무것도 해당되지 않을때는 시가총액 순서로 정렬해서 반환
             }
-            return new List<GetStockDTO>();
+            catch (Exception ex)
+            {
+                string err = $"예외 발생 : BusinessLayer/Services/StockService/(Function)GetTopStocksByValue {ex.Message}";
+                return (new List<GetStockDTO>(), err);
+            }
+
         }
 
         /// <summary>
@@ -178,7 +239,7 @@ namespace BusinessLayer.Services
         /// </summary>
         /// <param name="ticker">티커</param>
         /// <returns>주식 OHLCV 리스트</returns>
-        public async Task<List<GetStockOHLCVDTO>> GetStockOHLCV(string ticker)
+        public async Task<(List<GetStockOHLCVDTO>, string?)> GetStockOHLCV(string ticker)
         {
             try
             {
@@ -189,11 +250,12 @@ namespace BusinessLayer.Services
 
 
                 List<GetStockOHLCVDTO> dtoList = mapper.Map<List<StockOHLCV>, List<GetStockOHLCVDTO>>(list);
-                return dtoList;
+                return (dtoList, null);
             }
             catch (Exception ex)
             {
-                throw;
+                string err = $"예외 발생 : BusinessLayer/Services/StockService/(Function)GetStockOHLCV {ex.Message}";
+                return (new List<GetStockOHLCVDTO>(), err);
             }
         }
 
@@ -202,7 +264,7 @@ namespace BusinessLayer.Services
         /// </summary>
         /// <param name="ticker">티커</param>
         /// <returns>주식 Fundamental 리스트</returns>
-        public async Task<List<GetStockFundamentalDTO>> GetStockFundamental(string ticker)
+        public async Task<(List<GetStockFundamentalDTO>, string?)> GetStockFundamental(string ticker)
         {
             try
             {
@@ -213,11 +275,12 @@ namespace BusinessLayer.Services
 
 
                 List<GetStockFundamentalDTO> dtoList = mapper.Map<List<StockFundamental>, List<GetStockFundamentalDTO>>(list);
-                return dtoList;
+                return (dtoList, null);
             }
             catch (Exception ex)
             {
-                throw;
+                string err = $"예외 발생 : BusinessLayer/Services/StockService/(Function)GetStockFundamental {ex.Message}";
+                return (new List<GetStockFundamentalDTO>(), err);
             }
         }
 
@@ -226,7 +289,7 @@ namespace BusinessLayer.Services
         /// </summary>
         /// <param name="ticker">티커</param>
         /// <returns>주식 Fundamental 리스트</returns>
-        public async Task<List<GetStockMarketCapDTO>> GetStockMarketCap(string ticker)
+        public async Task<(List<GetStockMarketCapDTO>, string?)> GetStockMarketCap(string ticker)
         {
             try
             {
@@ -237,11 +300,12 @@ namespace BusinessLayer.Services
 
 
                 List<GetStockMarketCapDTO> dtoList = mapper.Map<List<StockMarketCap>, List<GetStockMarketCapDTO>>(list);
-                return dtoList;
+                return (dtoList, null);
             }
             catch (Exception ex)
             {
-                throw;
+                string err = $"예외 발생 : BusinessLayer/Services/StockService/(Function)GetStockMarketCap {ex.Message}";
+                return (new List<GetStockMarketCapDTO>(), err);
             }
         }
 
@@ -250,7 +314,7 @@ namespace BusinessLayer.Services
         /// </summary>
         /// <param name="ticker">티커</param>
         /// <returns>주식 MarketTRX 리스트</returns>
-        public async Task<List<GetStockMarketTRXDTO>> GetStockMarketTRX(string ticker)
+        public async Task<(List<GetStockMarketTRXDTO>, string?)> GetStockMarketTRX(string ticker)
         {
             try
             {
@@ -261,11 +325,12 @@ namespace BusinessLayer.Services
 
 
                 List<GetStockMarketTRXDTO> dtoList = mapper.Map<List<StockMarketTRX>, List<GetStockMarketTRXDTO>>(list);
-                return dtoList;
+                return (dtoList, null);
             }
             catch (Exception ex)
             {
-                throw;
+                string err = $"예외 발생 : BusinessLayer/Services/StockService/(Function)GetStockMarketTRX {ex.Message}";
+                return (new List<GetStockMarketTRXDTO>(), err);
             }
         }
 
@@ -274,7 +339,7 @@ namespace BusinessLayer.Services
         /// </summary>
         /// <param name="ticker">티커</param>
         /// <returns>주식 SectorTRX 리스트</returns>
-        public async Task<List<GetStockSectorTRXDTO>> GetStockSectorTRX(string ticker)
+        public async Task<(List<GetStockSectorTRXDTO>, string?)> GetStockSectorTRX(string ticker)
         {
             try
             {
@@ -285,11 +350,12 @@ namespace BusinessLayer.Services
 
 
                 List<GetStockSectorTRXDTO> dtoList = mapper.Map<List<StockSectorTRX>, List<GetStockSectorTRXDTO>>(list);
-                return dtoList;
+                return (dtoList, null);
             }
             catch (Exception ex)
             {
-                throw;
+                string err = $"예외 발생 : BusinessLayer/Services/StockService/(Function)GetStockSectorTRX {ex.Message}";
+                return (new List<GetStockSectorTRXDTO>(), err);
             }
         }
 

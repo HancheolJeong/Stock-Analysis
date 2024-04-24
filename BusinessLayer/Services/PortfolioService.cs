@@ -23,7 +23,7 @@ namespace BusinessLayer.Services
         /// </summary>
         /// <param name="createPortfolioDTO"></param>
         /// <returns></returns>
-        public async Task<bool> CreatePortfolio(CreatePortfolioDTO createPortfolioDTO)
+        public async Task<(bool, string?)> CreatePortfolio(CreatePortfolioDTO createPortfolioDTO)
         {
             try
             {
@@ -31,13 +31,13 @@ namespace BusinessLayer.Services
                 Mapper mapper = new Mapper(configuration);
                 Portfolio portfolio = mapper.Map<CreatePortfolioDTO, Portfolio>(createPortfolioDTO);
                 bool result = await _portfolioMapper.Create(portfolio);
-                return result;
+                return (result, null);
             }
             catch (Exception ex)
             {
                 // 예외 로깅
-                Console.WriteLine(ex.Message);
-                return false;
+                string err = $"예외 발생 : BusinessLayer/Services/PortfolioService/(Function)CreatePortfolio {ex.Message}";
+                return (false, err);
             }
         }
 
@@ -46,7 +46,7 @@ namespace BusinessLayer.Services
         /// </summary>
         /// <param name="email">사용자 이메일</param>
         /// <returns>List<GetPortfolioDTO></returns>
-        public async Task<List<GetPortfolioDTO>> GetPortfolio(string email)
+        public async Task<(List<GetPortfolioDTO>, string?)> GetPortfolio(string email)
         {
             try
             {
@@ -60,11 +60,12 @@ namespace BusinessLayer.Services
 
                 List<Portfolio> list = await _portfolioMapper.GetPortfolio(email);
                 List<GetPortfolioDTO> dtoList = mapper.Map<List<Portfolio>, List<GetPortfolioDTO>>(list);
-                return dtoList;
+                return (dtoList, null);
             }
             catch (Exception ex)
             {
-                throw;
+                string err = $"예외 발생 : BusinessLayer/Services/PortfolioService/(Function)GetPortfolio {ex.Message}";
+                return (new List<GetPortfolioDTO>(), err);
             }
         }
 
@@ -121,16 +122,17 @@ namespace BusinessLayer.Services
         /// </summary>
         /// <param name="id">portfolio테이블의 id</param>
         /// <returns>처리결과</returns>
-		public async Task<bool> DeletePortfolio(int id)
+		public async Task<(bool, string?)> DeletePortfolio(int id)
 		{
 			try
 			{
-				return await _portfolioMapper.DeletePortfolio(id);
+                bool result = await _portfolioMapper.DeletePortfolio(id);
+				return (result, null);
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine($"Error deleting portfolio with ID {id}: {ex.Message}");
-				return false;
+				string err = $"예외 발생 : BusinessLayer/Services/PortfolioService/(Function)DeletePortfolio {ex.Message}";
+				return (false, err);
 			}
 		}
 

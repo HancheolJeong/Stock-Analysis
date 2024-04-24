@@ -12,9 +12,11 @@ namespace Stock_Analysis.Controllers
     {
 
         private ILoginService loginService;
-        public LoginController(ILoginService service)
+        private readonly ILogger<LoginController> _logger;
+        public LoginController(ILoginService service, ILogger<LoginController> logger)
         {
             loginService = service;
+            _logger = logger;
         }
 
 
@@ -61,7 +63,12 @@ namespace Stock_Analysis.Controllers
             dto.email = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
             dto.name = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
 
-            var res = await loginService.Login(dto);
+            (var res, string? err) = await loginService.Login(dto);
+            if (err != null)
+            {
+                _logger.LogError(err);
+                return Redirect("/Exception");
+            }
             if (res) // 로그인 성공
             {
                 HttpContext.Session.Set("LoginUser", dto);

@@ -23,15 +23,24 @@ namespace BusinessLayer.Services
         /// </summary>
         /// <param name="getUserDTO"></param>
         /// <returns>처리결과</returns>
-        public async Task<bool> Login(GetUserDTO getUserDTO)
+        public async Task<(bool, string?)> Login(GetUserDTO getUserDTO)
         {
-            var configuration = new MapperConfiguration(cfg => { });
-            Mapper mapper = new Mapper(configuration);
-            Dictionary<string, object> dc = mapper.Map<GetUserDTO, Dictionary<string, object>>(getUserDTO); // 프로시저 변수로 사용하기 위해서 dto를 dictionary로 변환한다.
-            DataTable dt = await _procCall.RequestProcedure("UpsertUserByEmail", dc);
+            try
+            {
+                var configuration = new MapperConfiguration(cfg => { });
+                Mapper mapper = new Mapper(configuration);
+                Dictionary<string, object> dc = mapper.Map<GetUserDTO, Dictionary<string, object>>(getUserDTO); // 프로시저 변수로 사용하기 위해서 dto를 dictionary로 변환한다.
+                DataTable dt = await _procCall.RequestProcedure("UpsertUserByEmail", dc);
 
-            bool result = dt.Rows[0]["Result"].ToString() == "fail" ? false : true; // "fail" 이라는 결과를 받았다면 false를 리턴하고 아니면 true를 리턴한다.
-            return result;
+                bool result = dt.Rows[0]["Result"].ToString() == "fail" ? false : true; // "fail" 이라는 결과를 받았다면 false를 리턴하고 아니면 true를 리턴한다.
+                return (result, null);
+            }
+            catch (Exception ex) 
+            {
+                string err = $"예외 발생 : BusinessLayer/Services/LoginService/(Function)Login {ex.Message}";
+                return (false, err);
+            }
+
         }
 
     }

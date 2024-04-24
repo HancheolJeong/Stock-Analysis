@@ -9,12 +9,14 @@ namespace Stock_Analysis.Controllers
         private IPortfolioService _portfolioService;
         private IStockService _stockService;
         private IETFService _etfService;
+        private readonly ILogger<PortfolioController> _logger;
 
-        public PortfolioController(IPortfolioService portfolioService, IStockService stockService, IETFService etfService)
+        public PortfolioController(IPortfolioService portfolioService, IStockService stockService, IETFService etfService, ILogger<PortfolioController> logger)
         {
             _portfolioService = portfolioService;
             _stockService = stockService;
             _etfService = etfService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -33,19 +35,23 @@ namespace Stock_Analysis.Controllers
 
 
             string email = userDto.email;
-            var stocks = await _portfolioService.GetPortfolio(email);
-
+            (var stocks, string? err) = await _portfolioService.GetPortfolio(email);
+            if (err != null)
+            {
+                _logger.LogError(err);
+                return Redirect("/Exception");
+            }
             foreach (var stock in stocks)
             {
                 if (stock.market == "KOSPI") // 시장 코스피일때
                 {
-                    stock.name = _stockService.GetNameByTicker("KOSPI",stock.ticker); 
-                    stock.current_price = _stockService.GetPriceByTicker("KOSPI", stock.ticker);
+                    (stock.name, string? error) = _stockService.GetNameByTicker("KOSPI",stock.ticker); 
+                    (stock.current_price, string? error2)  = _stockService.GetPriceByTicker("KOSPI", stock.ticker);
                 }
                 else if (stock.market == "KOSDAQ") // 시장 코스닥일때
                 {
-                    stock.name = _stockService.GetNameByTicker("KOSDAQ", stock.ticker);
-                    stock.current_price = _stockService.GetPriceByTicker("KOSDAQ", stock.ticker);
+                    (stock.name, string? error) = _stockService.GetNameByTicker("KOSDAQ", stock.ticker);
+                    (stock.current_price, string? error2) = _stockService.GetPriceByTicker("KOSDAQ", stock.ticker);
                 }
                 else if (stock.market == "ETF") // 시장 ETF 일때
                 {
@@ -92,7 +98,13 @@ namespace Stock_Analysis.Controllers
                 market = market,
                 email = userDto.email
             };
-            bool isSuccess = await _portfolioService.CreatePortfolio(dto);
+            (bool isSuccess, string? err) = await _portfolioService.CreatePortfolio(dto);
+            if(err != null) 
+            {
+                _logger.LogError(err);
+                return Redirect("/Exception");
+            }
+
             if(isSuccess)
             {
                 return Json(new { success = true });
@@ -118,7 +130,14 @@ namespace Stock_Analysis.Controllers
 				return Json(new { success = false, message = "User is not authenticated." });
 			}
 
-			bool success = await _portfolioService.DeletePortfolio(id);
+			(bool success, string? err) = await _portfolioService.DeletePortfolio(id);
+
+            if(err != null)
+            {
+                _logger.LogError(err);
+                return Redirect("/Exception");
+            }
+
 			if (success)
 			{
 				return Json(new { success = true, message = "삭제 완료했습니다." });
