@@ -10,7 +10,7 @@
 
 ### 개발 기간
 
-2024.04.14 ~ 2024.04.23
+2024.04.14 ~ 2024.04.24
 
 <br />
 <br />
@@ -24,7 +24,7 @@ HTML, CSS, JavaScript
 
 ### Back
 
-ASP.NET Core, SQL Server 16
+ASP.NET Core, SQL Server 2022
 
 <br />
 <br />
@@ -50,6 +50,7 @@ ASP.NET Core, SQL Server 16
 - 자주쓰는 데이터 캐시메모리 적용
 - 사용자 세션관리
 - 데이터 시각화
+- 자동 서버점검
 
 <br/>
 <br />
@@ -124,6 +125,13 @@ ASP.NET Core, SQL Server 16
 <div markdown="1" style="padding-left: 15px;">
 <img src="https://github.com/HancheolJeong/Stock-Analysis/assets/70940120/e5a021f3-9ca7-4c4a-9970-4e0021fc3598.png" width="800px"/>
 <p style="text-align: center;">포트폴리오</p>
+</div>
+
+<br>
+
+<div markdown="1" style="padding-left: 15px;">
+<img src="https://github.com/HancheolJeong/Stock-Analysis/assets/70940120/17ca48b6-5db8-4611-8c24-043ca52432da.png" width="800px"/>
+<p style="text-align: center;">서버점검</p>
 </div>
 </details>
 
