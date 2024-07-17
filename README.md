@@ -32,12 +32,10 @@ ASP.NET Core, SQL Server 2022
 
 # 📝설계
 
-<details>
 <summary>ERD</summary>
 <div markdown="1" style="padding-left: 15px;">
 <img src="https://github.com/HancheolJeong/Stock-Analysis/assets/70940120/adba7de7-311b-4fae-97c5-92edb1959270.png" width="800px"/>
 </div>
-</details>
 
 <br/>
 <br />
@@ -58,7 +56,7 @@ ASP.NET Core, SQL Server 2022
 
 # 💻실행화면
 
-<details><summary>주요 실행화면</summary>
+<summary>주요 실행화면</summary>
 <div markdown="1" style="padding-left: 15px;">
 <img src="https://github.com/HancheolJeong/Stock-Analysis/assets/70940120/54c93e6a-c358-41e7-b238-b4bcac4bc51d.png" width="800px"/>
 <p style="text-align: center;">홈</p>
@@ -133,7 +131,6 @@ ASP.NET Core, SQL Server 2022
 <img src="https://github.com/HancheolJeong/Stock-Analysis/assets/70940120/17ca48b6-5db8-4611-8c24-043ca52432da.png" width="800px"/>
 <p style="text-align: center;">서버점검</p>
 </div>
-</details>
 
 <br>
 
